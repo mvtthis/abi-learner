@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, Link } from 'react-router-dom'
 import { SyncIndicator } from './SyncIndicator'
 import { useAuth } from '@/hooks/useAuth'
 import { useSync } from '@/hooks/useSync'
@@ -7,8 +7,8 @@ import { useDueCount } from '@/hooks/useReviewSession'
 const navItems = [
   { to: '/', icon: '🏠', label: 'Home' },
   { to: '/review', icon: '📖', label: 'Lernen' },
+  { to: '/explore', icon: '📚', label: 'Decks' },
   { to: '/browse', icon: '🗂️', label: 'Karten' },
-  { to: '/import', icon: '📥', label: 'Import' },
 ]
 
 export function Layout() {
@@ -23,12 +23,26 @@ export function Layout() {
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-zinc-900">
         <h1 className="text-base font-bold tracking-tight">Abi-Learner</h1>
-        <SyncIndicator
-          isOnline={isOnline}
-          isSyncing={isSyncing}
-          pendingCount={pendingCount}
-          onSync={sync}
-        />
+        <div className="flex items-center gap-2">
+          <SyncIndicator
+            isOnline={isOnline}
+            isSyncing={isSyncing}
+            pendingCount={pendingCount}
+            onSync={sync}
+          />
+          {user ? (
+            <span className="text-[10px] text-zinc-500 max-w-[100px] truncate">
+              {user.email}
+            </span>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs text-blue-400 px-2 py-1 rounded-lg hover:bg-zinc-800"
+            >
+              Login
+            </Link>
+          )}
+        </div>
       </header>
 
       {/* Content */}

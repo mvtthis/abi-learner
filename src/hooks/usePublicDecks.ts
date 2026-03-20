@@ -17,7 +17,7 @@ export function usePublicDecks(userId: string | null) {
       setLoading(true)
       const [fetchedDecks, imported] = await Promise.all([
         fetchPublicDecks(),
-        userId ? getUserImportedDecks(userId) : [],
+        getUserImportedDecks(userId),
       ])
       setDecks(fetchedDecks)
       setImportedDeckIds(imported)

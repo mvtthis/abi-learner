@@ -2,6 +2,24 @@ import { v4 as uuidv4 } from 'uuid'
 import { db, type Card } from './db'
 import { supabase, isSupabaseConfigured } from './supabase'
 
+const LOCAL_IMPORTS_KEY = 'abi-learner-imported-decks'
+
+function getLocalImportedDecks(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_IMPORTS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function addLocalImportedDeck(deckId: string) {
+  const ids = getLocalImportedDecks()
+  if (!ids.includes(deckId)) {
+    ids.push(deckId)
+    localStorage.setItem(LOCAL_IMPORTS_KEY, JSON.stringify(ids))
+  }
+}
+
 export interface PublicDeck {
   id: string
   name: string
@@ -68,7 +86,8 @@ export async function importDeckToLocal(
 
   await db.cards.bulkPut(cards)
 
-  // Track import in Supabase
+  // Track import locally + in Supabase
+  addLocalImportedDeck(deckId)
   if (supabase && userId) {
     await supabase
       .from('user_deck_imports')
@@ -79,14 +98,21 @@ export async function importDeckToLocal(
 }
 
 export async function getUserImportedDecks(
-  userId: string
+  userId: string | null
 ): Promise<string[]> {
-  if (!supabase || !isSupabaseConfigured()) return []
+  // Always include local imports
+  const localIds = getLocalImportedDecks()
 
-  const { data } = await supabase
-    .from('user_deck_imports')
-    .select('deck_id')
-    .eq('user_id', userId)
+  // Merge with Supabase if logged in
+  if (supabase && isSupabaseConfigured() && userId) {
+    const { data } = await supabase
+      .from('user_deck_imports')
+      .select('deck_id')
+      .eq('user_id', userId)
 
-  return data?.map((d) => d.deck_id) ?? []
+    const remoteIds = data?.map((d) => d.deck_id) ?? []
+    return [...new Set([...localIds, ...remoteIds])]
+  }
+
+  return localIds
 }
