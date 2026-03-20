@@ -1,0 +1,117 @@
+import { useState } from 'react'
+import { useReviewSession } from '@/hooks/useReviewSession'
+import { useAllTags } from '@/hooks/useCards'
+import { ReviewCard } from '@/components/ReviewCard'
+import { ReviewButtons } from '@/components/ReviewButtons'
+import { TagTree } from '@/components/TagTree'
+
+export function Review() {
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [showFilter, setShowFilter] = useState(false)
+  const tags = useAllTags()
+  const { session, loading, flip, answer, reload } = useReviewSession(
+    selectedTags.length > 0 ? selectedTags : undefined
+  )
+
+  const handleToggleTag = (tag: string) => {
+    if (tag === '') {
+      setSelectedTags([])
+    } else {
+      setSelectedTags((prev) =>
+        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      )
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full" />
+      </div>
+    )
+  }
+
+  if (session.isComplete) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+        <span className="text-5xl mb-4">🎉</span>
+        <h2 className="text-xl font-bold text-white mb-2">Geschafft!</h2>
+        <p className="text-zinc-400 text-sm mb-1">
+          {session.reviewedCount} Karten gelernt
+        </p>
+        <p className="text-zinc-600 text-xs">
+          Komm später wieder — neue Karten werden fällig.
+        </p>
+        <button
+          onClick={reload}
+          className="mt-6 px-6 py-2.5 bg-zinc-800 rounded-xl text-sm text-white hover:bg-zinc-700"
+        >
+          Nochmal prüfen
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 py-6 max-w-lg mx-auto flex flex-col min-h-[calc(100dvh-120px)]">
+      {/* Progress */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-400">
+            {session.reviewedCount + 1} / {session.totalCards}
+          </span>
+          <div className="w-24 h-1 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500 rounded-full transition-all"
+              style={{
+                width: `${((session.reviewedCount + 1) / session.totalCards) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+        <button
+          onClick={() => setShowFilter(!showFilter)}
+          className="text-xs text-zinc-500 px-2 py-1 rounded-lg hover:bg-zinc-800"
+        >
+          Filter {selectedTags.length > 0 && `(${selectedTags.length})`}
+        </button>
+      </div>
+
+      {/* Tag Filter */}
+      {showFilter && (
+        <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-xl p-3 max-h-48 overflow-y-auto">
+          <TagTree
+            tags={tags}
+            selectedTags={selectedTags}
+            onToggle={handleToggleTag}
+          />
+        </div>
+      )}
+
+      {/* Card */}
+      <div className="flex-1 flex items-center">
+        {session.currentCard && (
+          <ReviewCard
+            card={session.currentCard}
+            isFlipped={session.isFlipped}
+            onFlip={flip}
+          />
+        )}
+      </div>
+
+      {/* Answer Buttons */}
+      <div className="mt-6 pb-2">
+        {session.isFlipped ? (
+          <ReviewButtons onAnswer={answer} />
+        ) : (
+          <button
+            onClick={flip}
+            className="w-full max-w-lg mx-auto block py-4 rounded-xl bg-zinc-800 text-white font-medium text-sm active:bg-zinc-700"
+          >
+            Antwort zeigen
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
