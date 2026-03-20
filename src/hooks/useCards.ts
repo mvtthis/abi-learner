@@ -4,8 +4,7 @@ import { db, type Card } from '@/lib/db'
 
 export function useCards(filterTags?: string[]) {
   const cards = useLiveQuery(async () => {
-    let collection = db.cards.where('deleted').equals(0)
-    const all = await collection.toArray()
+    const all = await db.cards.filter((c) => !c.deleted).toArray()
 
     if (filterTags && filterTags.length > 0) {
       return all.filter((card) =>
