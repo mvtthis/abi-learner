@@ -42,14 +42,27 @@ export function useSync(userId: string | null) {
     }
   }, [isOnline, userId])
 
-  // Update pending count periodically
+  // Auto-sync every 30s when online and has pending changes, full sync every 2min
   useEffect(() => {
+    if (!userId || !isOnline || !isSupabaseConfigured()) return
+
     const interval = setInterval(async () => {
       const count = await getPendingCount()
       setPendingCount(count)
-    }, 10000)
-    return () => clearInterval(interval)
-  }, [])
+      if (count > 0) {
+        sync()
+      }
+    }, 30000) // check every 30s
+
+    const fullSync = setInterval(() => {
+      sync()
+    }, 120000) // full sync every 2min
+
+    return () => {
+      clearInterval(interval)
+      clearInterval(fullSync)
+    }
+  }, [userId, isOnline, sync])
 
   return { isOnline, isSyncing, pendingCount, lastSyncError, sync }
 }
