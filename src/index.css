@@ -32,23 +32,70 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Card content HTML rendering */
+/* ========================================
+   Card content HTML rendering
+   ======================================== */
+
+.card-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #e5e7eb; /* gray-200 */
+}
+
+/* Keywords / Bold — blue accent for scannability */
 .card-content b,
 .card-content strong {
-  color: #fff;
+  color: #60a5fa; /* blue-400 */
   font-weight: 600;
 }
+
+/* Line breaks — real vertical breathing room */
 .card-content br {
   display: block;
-  margin-top: 0.5rem;
+  content: "";
+  margin-top: 10px;
 }
+
+/* Double breaks get extra space (sections) */
+.card-content br + br {
+  margin-top: 20px;
+}
+
+/* Sub/Superscript — slightly larger for mobile readability */
 .card-content sub {
-  font-size: 0.75em;
+  font-size: 0.8em;
   vertical-align: sub;
+  line-height: 0;
 }
 .card-content sup {
-  font-size: 0.75em;
+  font-size: 0.8em;
   vertical-align: super;
+  line-height: 0;
+}
+
+/* Parenthetical / secondary text feel via opacity on nested content */
+.card-content i,
+.card-content em {
+  color: #9ca3af; /* gray-400 */
+  font-style: italic;
+}
+
+/* Card content scrollbar */
+.card-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+.card-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.card-scroll::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+.card-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Scrollbar */

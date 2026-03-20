@@ -53,9 +53,9 @@ export function Review() {
   }
 
   return (
-    <div className="px-4 py-6 max-w-lg mx-auto flex flex-col min-h-[calc(100dvh-120px)]">
-      {/* Progress */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col h-[calc(100dvh-110px)] max-w-lg mx-auto">
+      {/* Progress bar + filter */}
+      <div className="flex items-center justify-between px-4 pt-4 pb-2 flex-shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-sm text-zinc-400">
             {session.reviewedCount + 1} / {session.totalCards}
@@ -79,7 +79,7 @@ export function Review() {
 
       {/* Tag Filter */}
       {showFilter && (
-        <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-xl p-3 max-h-48 overflow-y-auto">
+        <div className="mx-4 mb-2 bg-zinc-900 border border-zinc-800 rounded-xl p-3 max-h-48 overflow-y-auto flex-shrink-0">
           <TagTree
             tags={tags}
             selectedTags={selectedTags}
@@ -88,8 +88,8 @@ export function Review() {
         </div>
       )}
 
-      {/* Card */}
-      <div className="flex-1 flex items-center">
+      {/* Card — takes remaining space */}
+      <div className="flex-1 min-h-0 flex items-start px-4 py-2 overflow-hidden">
         {session.currentCard && (
           <ReviewCard
             card={session.currentCard}
@@ -99,14 +99,14 @@ export function Review() {
         )}
       </div>
 
-      {/* Answer Buttons */}
-      <div className="mt-6 pb-2">
+      {/* Buttons — always fixed at bottom */}
+      <div className="px-4 pb-4 pt-2 flex-shrink-0">
         {session.isFlipped ? (
           <ReviewButtons onAnswer={answer} />
         ) : (
           <button
             onClick={flip}
-            className="w-full max-w-lg mx-auto block py-4 rounded-xl bg-zinc-800 text-white font-medium text-sm active:bg-zinc-700"
+            className="w-full py-4 rounded-xl bg-zinc-800 text-white font-medium text-sm active:bg-zinc-700 transition-colors"
           >
             Antwort zeigen
           </button>
