@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { usePublicDecks } from '@/hooks/usePublicDecks'
 import { DeckCard } from '@/components/DeckCard'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { db } from '@/lib/db'
 
 const SUBJECT_ORDER = ['bio', 'geschichte', 'sport', 'deutsch', 'englisch']
 const SUBJECT_LABELS: Record<string, string> = {
@@ -14,8 +16,25 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 export function Explore() {
   const { user } = useAuth()
-  const { decks, importedDeckIds, loading, importing, importDeck } =
+  const { decks, importedDeckIds, loading, importing, importDeck, importAllDecks } =
     usePublicDecks(user?.id ?? null)
+  const [importingAll, setImportingAll] = useState(false)
+  const [importAllResult, setImportAllResult] = useState<string | null>(null)
+
+  const handleImportAll = async (clearFirst: boolean) => {
+    setImportingAll(true)
+    setImportAllResult(null)
+
+    if (clearFirst) {
+      await db.cards.clear()
+      await db.reviewLogs.clear()
+      localStorage.removeItem('abi-learner-imported-decks')
+    }
+
+    const count = await importAllDecks()
+    setImportAllResult(`${count} Karten importiert!`)
+    setImportingAll(false)
+  }
 
   if (!isSupabaseConfigured()) {
     return (
@@ -25,9 +44,6 @@ export function Explore() {
         <p className="text-zinc-500 text-sm">
           Supabase nicht konfiguriert. Richte VITE_SUPABASE_URL und
           VITE_SUPABASE_ANON_KEY in .env ein, um öffentliche Decks zu nutzen.
-        </p>
-        <p className="text-zinc-600 text-xs mt-4">
-          Du kannst trotzdem Karten per .txt-Import hinzufügen.
         </p>
       </div>
     )
@@ -49,9 +65,50 @@ export function Explore() {
     grouped.set(deck.subject, group)
   }
 
+  const allImported = decks.length > 0 && decks.every((d) => importedDeckIds.includes(d.id))
+  const totalCards = decks.reduce((s, d) => s + d.card_count, 0)
+
   return (
     <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
       <h2 className="text-lg font-bold text-white">Deck-Bibliothek</h2>
+
+      {/* Import All Button */}
+      {decks.length > 0 && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
+          {importAllResult ? (
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-3 text-center">
+              <p className="text-emerald-400 text-sm font-medium">{importAllResult}</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-zinc-400 text-xs">
+                {decks.length} Decks · {totalCards} Karten
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleImportAll(true)}
+                  disabled={importingAll}
+                  className="flex-1 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
+                >
+                  {importingAll ? 'Importiere...' : 'Alle neu importieren'}
+                </button>
+                {!allImported && (
+                  <button
+                    onClick={() => handleImportAll(false)}
+                    disabled={importingAll}
+                    className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 disabled:opacity-50 transition-colors"
+                  >
+                    Fehlende hinzufügen
+                  </button>
+                )}
+              </div>
+              <p className="text-zinc-600 text-[10px]">
+                "Alle neu importieren" löscht bestehende Karten + Lernfortschritt
+              </p>
+            </>
+          )}
+        </div>
+      )}
 
       {decks.length === 0 && (
         <p className="text-zinc-500 text-sm text-center py-8">

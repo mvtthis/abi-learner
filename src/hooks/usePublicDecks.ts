@@ -36,5 +36,17 @@ export function usePublicDecks(userId: string | null) {
     return count
   }
 
-  return { decks, importedDeckIds, loading, importing, importDeck }
+  const importAllDecks = async () => {
+    let totalCount = 0
+    for (const deck of decks) {
+      if (!importedDeckIds.includes(deck.id)) {
+        const count = await importDeckToLocal(deck.id, userId ?? undefined)
+        totalCount += count
+      }
+    }
+    setImportedDeckIds(decks.map((d) => d.id))
+    return totalCount
+  }
+
+  return { decks, importedDeckIds, loading, importing, importDeck, importAllDecks }
 }
