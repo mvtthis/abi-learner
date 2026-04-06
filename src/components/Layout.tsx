@@ -16,7 +16,7 @@ export function Layout() {
   const { isOnline, isSyncing, pendingCount, sync } = useSync(
     user?.id ?? null
   )
-  const dueCount = useDueCount()
+  const { reviewCount } = useDueCount()
 
   return (
     <div className="min-h-dvh bg-black text-white flex flex-col">
@@ -65,9 +65,9 @@ export function Layout() {
             >
               <span className="text-xl mb-0.5">{item.icon}</span>
               <span>{item.label}</span>
-              {item.to === '/review' && dueCount > 0 && (
+              {item.to === '/review' && reviewCount > 0 && (
                 <span className="absolute -top-0.5 right-2 bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                  {dueCount > 99 ? '99' : dueCount}
+                  {reviewCount > 99 ? '99' : reviewCount}
                 </span>
               )}
             </NavLink>

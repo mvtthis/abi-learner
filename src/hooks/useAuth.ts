@@ -44,6 +44,7 @@ export function useAuth() {
   const signOut = async () => {
     if (!supabase) return
     await supabase.auth.signOut()
+    localStorage.removeItem('abi-learner-imported-decks')
     setUser(null)
   }
 

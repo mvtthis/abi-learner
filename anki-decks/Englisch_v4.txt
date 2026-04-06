@@ -1,0 +1,17 @@
+#separator:tab
+#html:true
+#tags column:3
+Wie ist die mündliche Englisch-Prüfung aufgebaut?	Teil 1 (~10 Min): Monolog (Präsentation/Bildbeschreibung). Teil 2 (~10–20 Min): Dialog (Prüfungsgespräch).	englisch::pruefungsformat
+Wie leitest du eine Bildbeschreibung ein?	"The picture shows…" / "In the foreground we can see…" / "The overall mood is…"	englisch::useful_phrases
+Wie interpretierst du ein Bild?	"This could represent…" / "It might symbolize…" / "This relates to…"	englisch::useful_phrases
+Wie leitest du deine Meinung ein?	"In my opinion…" / "From my perspective…" / "I strongly believe that…"	englisch::useful_phrases
+Wie strukturierst du Argumente?	"First of all…" / "Moreover…" / "Another important aspect is…"	englisch::useful_phrases
+Wie leitest du eine Gegenposition ein?	"On the other hand…" / "However, one could argue…" / "While I understand that…, I still think…"	englisch::useful_phrases
+Wie fasst du zusammen?	"All things considered…" / "To sum up…" / "Ultimately, I believe…"	englisch::useful_phrases
+Was sagst du wenn dir ein Wort fehlt?	"What I mean is…" / "In other words…" / "It's a kind of…"	englisch::useful_phrases
+Pro-Argumente Globalization?	Economic growth, cultural exchange, technology spreads faster, poverty reduction.	englisch::topics
+Contra-Argumente Globalization?	Growing inequality, loss of cultural identity, exploitation of cheap labor, fragile supply chains.	englisch::topics
+Pro-Argumente Technology?	Connectivity, access to information, democratic participation, education opportunities.	englisch::topics
+Contra-Argumente Technology?	Privacy concerns, echo chambers, cyberbullying, addiction, misinformation.	englisch::topics
+Zentrale Themen UK?	Brexit (sovereignty vs. economy), Commonwealth, multicultural society, class system.	englisch::topics
+Zentrale Themen USA?	American Dream (myth vs. reality), polarization, gun control, immigration, racial tensions.	englisch::topics

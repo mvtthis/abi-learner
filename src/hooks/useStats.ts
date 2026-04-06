@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '@/lib/db'
+import { db, INACTIVE_NEXT_REVIEW } from '@/lib/db'
 
 export interface DayStat {
   date: string
@@ -8,6 +8,11 @@ export interface DayStat {
   hard: number
   good: number
   easy: number
+}
+
+function toLocalDateKey(ts: number): string {
+  const d = new Date(ts)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 export function useStats() {
@@ -22,17 +27,17 @@ export function useStats() {
       .aboveOrEqual(fourteenDaysAgo.getTime())
       .toArray()
 
-    // Group by day
+    // Group by day (local timezone)
     const dayMap = new Map<string, DayStat>()
     for (let i = 0; i < 14; i++) {
       const d = new Date(fourteenDaysAgo)
       d.setDate(d.getDate() + i)
-      const key = d.toISOString().slice(0, 10)
+      const key = toLocalDateKey(d.getTime())
       dayMap.set(key, { date: key, total: 0, again: 0, hard: 0, good: 0, easy: 0 })
     }
 
     for (const r of reviews) {
-      const key = new Date(r.reviewed_at).toISOString().slice(0, 10)
+      const key = toLocalDateKey(r.reviewed_at)
       const day = dayMap.get(key)
       if (!day) continue
       day.total++
@@ -43,53 +48,52 @@ export function useStats() {
     }
 
     // Today count
-    const todayStart = new Date()
-    todayStart.setHours(0, 0, 0, 0)
-    const todayCount = reviews.filter(
-      (r) => r.reviewed_at >= todayStart.getTime()
-    ).length
+    const todayKey = toLocalDateKey(Date.now())
+    const todayDay = dayMap.get(todayKey)
+    const todayCount = todayDay?.total ?? 0
 
-    // Streak
+    // Streak — fetch all review logs for proper count
+    const allReviews = await db.reviewLogs.toArray()
+    const reviewDays = new Set(allReviews.map((r) => toLocalDateKey(r.reviewed_at)))
+
     let streak = 0
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    for (let i = 0; i <= 365; i++) {
+
+    // If today has reviews, count it and start checking yesterday
+    // If today has no reviews yet, start checking from yesterday
+    const hasTodayReviews = reviewDays.has(todayKey)
+    if (hasTodayReviews) streak = 1
+
+    const startOffset = hasTodayReviews ? 1 : 1
+    for (let i = startOffset; i <= 365; i++) {
       const d = new Date(today)
       d.setDate(d.getDate() - i)
-      const key = d.toISOString().slice(0, 10)
-      const day = dayMap.get(key)
-      if (i === 0 && (!day || day.total === 0)) continue // Today might not be done yet
-      if (day && day.total > 0) {
+      const key = toLocalDateKey(d.getTime())
+      if (reviewDays.has(key)) {
         streak++
-      } else if (i > 0) {
+      } else {
         break
       }
     }
 
-    // Check if today also has reviews for accurate streak
-    const todayKey = today.toISOString().slice(0, 10)
-    const todayDay = dayMap.get(todayKey)
-    if (todayDay && todayDay.total > 0) {
-      // Today counts, streak already incremented
-    }
-
-    // Forecast: due cards per day for next 7 days
-    const allCards = await db.cards.filter((c) => !c.deleted).toArray()
+    // Forecast: due cards per day for next 7 days (local timezone)
+    const allCards = await db.cards.filter((c) => !c.deleted && c.next_review < INACTIVE_NEXT_REVIEW).toArray()
     const forecast: { date: string; count: number }[] = []
     for (let i = 0; i < 7; i++) {
-      const d = new Date()
-      d.setDate(d.getDate() + i)
-      d.setHours(23, 59, 59, 999)
-      const dayStart = new Date(d)
+      const dayEnd = new Date()
+      dayEnd.setDate(dayEnd.getDate() + i)
+      dayEnd.setHours(23, 59, 59, 999)
+
+      const dayStart = new Date(dayEnd)
       dayStart.setHours(0, 0, 0, 0)
 
       const count = allCards.filter((c) => {
-        if (i === 0) return c.next_review <= d.getTime()
-        return (
-          c.next_review > dayStart.getTime() && c.next_review <= d.getTime()
-        )
+        if (i === 0) return c.next_review <= dayEnd.getTime()
+        return c.next_review > dayStart.getTime() && c.next_review <= dayEnd.getTime()
       }).length
-      forecast.push({ date: d.toISOString().slice(0, 10), count })
+
+      forecast.push({ date: toLocalDateKey(dayEnd.getTime()), count })
     }
 
     return {

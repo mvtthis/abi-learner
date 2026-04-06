@@ -55,55 +55,55 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 // Deck metadata mapping: filename → deck info
 const DECK_META = {
-  'Bio_Stoffwechsel_Anki.txt': {
+  'Bio_Stoffwechsel_v4.txt': {
     name: 'Bio: Stoffwechsel',
     subject: 'bio',
     emoji: '🧬',
     description: 'Enzymatik, Fotosynthese, Zellatmung — Karten auf eA-Niveau',
   },
-  'Bio_Genetik_Anki.txt': {
+  'Bio_Genetik_v4.txt': {
     name: 'Bio: Genetik & Molekularbiologie',
     subject: 'bio',
     emoji: '🧬',
     description: 'DNA-Replikation, Proteinbiosynthese, Genregulation, Gentechnik',
   },
-  'Bio_Neurobiologie_Anki.txt': {
+  'Bio_Neurobiologie_v4.txt': {
     name: 'Bio: Neurobiologie',
     subject: 'bio',
     emoji: '🧬',
     description: 'Ruhepotenzial, Aktionspotenzial, Synapse, Synapsengifte',
   },
-  'Bio_Oekologie_Anki.txt': {
+  'Bio_Oekologie_v4.txt': {
     name: 'Bio: Ökologie',
     subject: 'bio',
     emoji: '🧬',
     description: 'Toleranzkurve, Lotka-Volterra, Stoffkreisläufe, Sukzession',
   },
-  'Bio_Evolution_Anki.txt': {
+  'Bio_Evolution_v4.txt': {
     name: 'Bio: Evolution',
     subject: 'bio',
     emoji: '🧬',
     description: 'Selektion, Artbildung, Hardy-Weinberg, Coevolution',
   },
-  'Geschichte_Methodik_Wahlmodule_Anki.txt': {
+  'Geschichte_v4.txt': {
     name: 'Geschichte: Methodik & Wahlmodule 2026',
     subject: 'geschichte',
     emoji: '🏛️',
     description: 'Quellenanalyse, Operatoren, alle 4 Wahlmodule NDS 2026',
   },
-  'Sport_Theorie_Anki.txt': {
+  'Sport_v4.txt': {
     name: 'Sport: Theorie eA',
     subject: 'sport',
     emoji: '⚽',
     description: 'Trainingslehre, Bewegungsanalyse, Sportmedizin, Psychologie',
   },
-  'Deutsch_Stilmittel_Epochen_Anki.txt': {
+  'Deutsch_v4.txt': {
     name: 'Deutsch: Stilmittel, Epochen & Lektüren',
     subject: 'deutsch',
     emoji: '📖',
     description: 'Stilmittel, Epochen, Pflichtlektüren NDS 2026, Gedichtinterpretation',
   },
-  'Englisch_Muendlich_Anki.txt': {
+  'Englisch_v4.txt': {
     name: 'Englisch: Mündliche Prüfung',
     subject: 'englisch',
     emoji: '🇬🇧',

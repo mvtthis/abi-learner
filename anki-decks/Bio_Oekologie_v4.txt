@@ -1,0 +1,29 @@
+#separator:tab
+#html:true
+#tags column:3
+Was ist ein Habitat?	Der *Lebensraum* einer Art — der Ort wo sie vorkommt.	bio::oekologie::grundlagen
+Was ist eine ökologische Nische?	Die Gesamtheit aller Umweltbeziehungen einer Art (Nahrung, Temperatur, Konkurrenten). Kein Ort, sondern ein *Konzept*.	bio::oekologie::grundlagen
+Was ist die Fundamentalnische?	Der theoretisch mögliche Bereich einer Art *ohne Konkurrenz*.	bio::oekologie::grundlagen
+Was ist die Realnische?	Der tatsächlich besetzte Bereich — durch *Konkurrenz eingeschränkt*.	bio::oekologie::grundlagen
+Was zeigt eine Toleranzkurve?	Leistung abhängig von einem Umweltfaktor. Hat ein *Optimum* und zwei Toleranzgrenzen.	bio::oekologie::grundlagen
+Was bedeutet euryök?	*Breite Toleranz* — die Art erträgt große Schwankungen eines Faktors.	bio::oekologie::grundlagen
+Was bedeutet stenök?	*Enge Toleranz* — die Art verträgt nur geringe Schwankungen.	bio::oekologie::grundlagen
+Was besagt die Bergmannsche Regel?	Gleichwarme Tiere sind in kälteren Gebieten *größer* → weniger Oberfläche relativ zum Volumen → weniger Wärmeverlust.	bio::oekologie::faktoren
+Was besagt die Allensche Regel?	In kälteren Gebieten sind Körperanhänge *kürzer* (Ohren, Schwanz) → weniger Wärmeverlust.	bio::oekologie::faktoren
+Was besagt Lotka-Volterra Regel 1?	Räuber- und Beutepopulation schwanken *periodisch*. Die Räuberkurve folgt zeitversetzt der Beute.	bio::oekologie::wechselwirkungen
+Was besagt Lotka-Volterra Regel 2?	Die *mittleren Populationsgrößen* bleiben langfristig konstant.	bio::oekologie::wechselwirkungen
+Was besagt Lotka-Volterra Regel 3?	Bei gleichmäßiger Dezimierung beider Populationen erholt sich die *Beute schneller*.	bio::oekologie::wechselwirkungen
+Was ist das Konkurrenzausschlussprinzip?	Zwei Arten mit identischer Nische können nicht dauerhaft koexistieren. Die stärkere verdrängt die andere.	bio::oekologie::wechselwirkungen
+Was sind r-Strategen?	Viele Nachkommen, wenig Pflege, kurze Lebensdauer, schnelle Vermehrung. Z.B. Blattläuse.	bio::oekologie::populationsdynamik
+Was sind K-Strategen?	Wenige Nachkommen, viel Pflege, lange Lebensdauer. Leben nahe der Kapazitätsgrenze. Z.B. Elefanten.	bio::oekologie::populationsdynamik
+Was ist die Kapazitätsgrenze K?	Die maximale Populationsgröße die ein Lebensraum langfristig tragen kann.	bio::oekologie::populationsdynamik
+Was unterscheidet exponentielles von logistischem Wachstum?	Exponentiell = J-Kurve, unbegrenzt. Logistisch = S-Kurve, nähert sich der Kapazitätsgrenze K.	bio::oekologie::populationsdynamik
+Wie wird CO₂ im Kohlenstoffkreislauf aufgenommen?	Durch *Fotosynthese* der Pflanzen → CO₂ wird in organische Verbindungen eingebaut.	bio::oekologie::stoffkreislaeufe
+Wie wird CO₂ im Kohlenstoffkreislauf freigesetzt?	Durch *Zellatmung*, Zersetzung durch Destruenten und Verbrennung fossiler Brennstoffe.	bio::oekologie::stoffkreislaeufe
+Was machen Knöllchenbakterien im Stickstoffkreislauf?	*N₂-Fixierung:* Sie wandeln Luftstickstoff (N₂) in Ammonium (NH₄⁺) um.	bio::oekologie::stoffkreislaeufe
+Was ist Nitrifikation?	NH₄⁺ → NO₃⁻ durch Bakterien (aerob). Pflanzen nehmen NO₃⁻ dann auf.	bio::oekologie::stoffkreislaeufe
+Wie viel Energie geht pro Trophieebene verloren?	Ca. *90%* — durch Zellatmung und Wärme. Nur ~10% werden weitergegeben.	bio::oekologie::energiefluss
+Was ist Nettoprimärproduktion?	Bruttoproduktion minus Eigenverbrauch der Pflanzen. Das was Konsumenten *tatsächlich* zur Verfügung steht.	bio::oekologie::energiefluss
+Was ist Primärsukzession?	Besiedlung von nacktem Substrat (z.B. Lavagestein). Dauert Jahrhunderte.	bio::oekologie::sukzession
+Was ist Sekundärsukzession?	Wiederbesiedlung nach Störung (z.B. Waldbrand). Boden vorhanden → Jahrzehnte.	bio::oekologie::sukzession
+Was ist der anthropogene Treibhauseffekt?	Verbrennung fossiler Brennstoffe → mehr CO₂ → verstärkter Treibhauseffekt → globale Erwärmung.	bio::oekologie::biodiversitaet

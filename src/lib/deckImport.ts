@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { db, type Card } from './db'
+import { db, type Card, INACTIVE_NEXT_REVIEW } from './db'
 import { supabase, isSupabaseConfigured } from './supabase'
 
 const LOCAL_IMPORTS_KEY = 'abi-learner-imported-decks'
@@ -80,7 +80,7 @@ export async function importDeckToLocal(
     ease_factor: 2.5,
     interval: 0,
     repetitions: 0,
-    next_review: now,
+    next_review: INACTIVE_NEXT_REVIEW,
     sync_status: 'pending' as const,
   }))
 

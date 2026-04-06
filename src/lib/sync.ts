@@ -5,13 +5,15 @@ import { supabase, isSupabaseConfigured } from './supabase'
 export async function pushPendingChanges(userId: string): Promise<void> {
   if (!supabase || !isSupabaseConfigured()) return
 
-  // Push pending cards
+  // Push pending cards — snapshot IDs first to avoid race condition
   const pendingCards = await db.cards
     .where('sync_status')
     .equals('pending')
     .toArray()
 
   if (pendingCards.length > 0) {
+    const pendingIds = pendingCards.map((c) => c.id)
+
     const supabaseCards = pendingCards.map((c) => ({
       id: c.id,
       user_id: userId,
@@ -27,7 +29,6 @@ export async function pushPendingChanges(userId: string): Promise<void> {
       next_review: new Date(c.next_review).toISOString(),
     }))
 
-    // Batch in groups of 200 to avoid payload limits
     for (let i = 0; i < supabaseCards.length; i += 200) {
       const batch = supabaseCards.slice(i, i + 200)
       const { error } = await supabase
@@ -36,23 +37,28 @@ export async function pushPendingChanges(userId: string): Promise<void> {
 
       if (error) {
         console.error('Push cards error:', error.message)
-        return // Don't mark as synced if push failed
+        return
       }
     }
 
-    await db.cards
-      .where('sync_status')
-      .equals('pending')
-      .modify({ sync_status: 'synced' })
+    // Only mark the specific IDs we uploaded as synced (not any new pending ones)
+    for (const id of pendingIds) {
+      const card = await db.cards.get(id)
+      if (card && card.sync_status === 'pending') {
+        await db.cards.update(id, { sync_status: 'synced' })
+      }
+    }
   }
 
-  // Push pending reviews
+  // Push pending reviews — same pattern
   const pendingReviews = await db.reviewLogs
     .where('sync_status')
     .equals('pending')
     .toArray()
 
   if (pendingReviews.length > 0) {
+    const pendingIds = pendingReviews.map((r) => r.id)
+
     const supabaseReviews = pendingReviews.map((r) => ({
       id: r.id,
       user_id: userId,
@@ -68,10 +74,12 @@ export async function pushPendingChanges(userId: string): Promise<void> {
       .insert(supabaseReviews)
 
     if (!error) {
-      await db.reviewLogs
-        .where('sync_status')
-        .equals('pending')
-        .modify({ sync_status: 'synced' })
+      for (const id of pendingIds) {
+        const log = await db.reviewLogs.get(id)
+        if (log && log.sync_status === 'pending') {
+          await db.reviewLogs.update(id, { sync_status: 'synced' })
+        }
+      }
     }
   }
 }
@@ -92,6 +100,9 @@ export async function pullRemoteChanges(userId: string): Promise<void> {
     for (const rc of remoteCards) {
       const localCard = await db.cards.get(rc.id)
       const remoteUpdated = new Date(rc.updated_at).getTime()
+
+      // Skip if local card has pending changes (local wins over remote)
+      if (localCard?.sync_status === 'pending') continue
 
       if (!localCard || remoteUpdated > localCard.updated_at) {
         await db.cards.put({
@@ -126,7 +137,6 @@ export async function pullRemoteChanges(userId: string): Promise<void> {
 async function syncDeckImports(userId: string): Promise<void> {
   if (!supabase || !isSupabaseConfigured()) return
 
-  // Get all decks this user has imported (from any device)
   const { data: imports } = await supabase
     .from('user_deck_imports')
     .select('deck_id')
@@ -134,13 +144,12 @@ async function syncDeckImports(userId: string): Promise<void> {
 
   if (!imports || imports.length === 0) return
 
-  // Get local card count to check which decks are actually present
   const localCards = await db.cards.filter((c) => !c.deleted).toArray()
+  const localFronts = new Set(localCards.map((c) => c.front))
 
   for (const imp of imports) {
     const deckId = imp.deck_id
 
-    // Get the public cards for this deck to know what tags they use
     const { data: publicCards } = await supabase
       .from('public_cards')
       .select('front, back, tags')
@@ -149,14 +158,9 @@ async function syncDeckImports(userId: string): Promise<void> {
 
     if (!publicCards || publicCards.length === 0) continue
 
-    // Check if we have any local cards that match this deck's content
-    // by checking if any local card has the same front text as the first public card
-    const sampleFront = publicCards[0].front
-    const hasLocalCards = localCards.some((c) => c.front === sampleFront)
+    // Check if we already have this deck's cards locally
+    if (localFronts.has(publicCards[0].front)) continue
 
-    if (hasLocalCards) continue // Already have this deck locally
-
-    // Fetch all public cards for this deck and import them
     const { data: allPublicCards } = await supabase
       .from('public_cards')
       .select('*')
@@ -167,24 +171,28 @@ async function syncDeckImports(userId: string): Promise<void> {
     console.log(`Syncing missing deck: ${deckId} (${allPublicCards.length} cards)`)
 
     const now = Date.now()
-    const cards: Card[] = allPublicCards.map((pc) => ({
-      id: uuidv4(),
-      front: pc.front,
-      back: pc.back,
-      tags: pc.tags,
-      created_at: now,
-      updated_at: now,
-      deleted: false,
-      ease_factor: 2.5,
-      interval: 0,
-      repetitions: 0,
-      next_review: now,
-      sync_status: 'pending' as const,
-    }))
+    const INACTIVE = new Date('2100-01-01').getTime()
+    const cards: Card[] = allPublicCards
+      .filter((pc) => !localFronts.has(pc.front)) // Skip duplicates
+      .map((pc) => ({
+        id: uuidv4(),
+        front: pc.front,
+        back: pc.back,
+        tags: pc.tags,
+        created_at: now,
+        updated_at: now,
+        deleted: false,
+        ease_factor: 2.5,
+        interval: 0,
+        repetitions: 0,
+        next_review: INACTIVE,
+        sync_status: 'pending' as const,
+      }))
 
-    await db.cards.bulkPut(cards)
+    if (cards.length > 0) {
+      await db.cards.bulkPut(cards)
+    }
 
-    // Update local tracking
     try {
       const stored = JSON.parse(localStorage.getItem('abi-learner-imported-decks') || '[]')
       if (!stored.includes(deckId)) {

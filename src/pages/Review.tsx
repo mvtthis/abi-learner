@@ -32,12 +32,16 @@ export function Review() {
   }
 
   if (session.isComplete) {
+    const accuracy = session.reviewedCount > 0
+      ? Math.round((session.correctCount / session.reviewedCount) * 100)
+      : 0
+
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
         <span className="text-5xl mb-4">🎉</span>
         <h2 className="text-xl font-bold text-white mb-2">Geschafft!</h2>
         <p className="text-zinc-400 text-sm mb-1">
-          {session.reviewedCount} Karten gelernt
+          {session.reviewedCount} Karten gelernt · {accuracy}% richtig
         </p>
         <p className="text-zinc-600 text-xs">
           Komm später wieder — neue Karten werden fällig.
@@ -52,6 +56,8 @@ export function Review() {
     )
   }
 
+  const remaining = session.queue.length + 1
+
   return (
     <div className="flex flex-col h-[calc(100dvh-110px)] max-w-lg mx-auto">
       {/* Progress bar + filter */}
@@ -64,10 +70,13 @@ export function Review() {
             <div
               className="h-full bg-blue-500 rounded-full transition-all"
               style={{
-                width: `${((session.reviewedCount + 1) / session.totalCards) * 100}%`,
+                width: `${((session.reviewedCount) / session.totalCards) * 100}%`,
               }}
             />
           </div>
+          <span className="text-[11px] text-zinc-600">
+            noch {remaining}
+          </span>
         </div>
         <button
           onClick={() => setShowFilter(!showFilter)}
@@ -88,8 +97,8 @@ export function Review() {
         </div>
       )}
 
-      {/* Card — takes remaining space */}
-      <div className="flex-1 min-h-0 flex items-start px-4 py-2 overflow-hidden">
+      {/* Card — takes remaining space, scrollable */}
+      <div className="flex-1 min-h-0 flex items-start px-4 py-2 overflow-y-auto">
         {session.currentCard && (
           <ReviewCard
             card={session.currentCard}

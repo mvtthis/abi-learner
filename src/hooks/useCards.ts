@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { v4 as uuidv4 } from 'uuid'
-import { db, type Card } from '@/lib/db'
+import { db, type Card, INACTIVE_NEXT_REVIEW, getActivatedTopics, getCardTopic } from '@/lib/db'
 
 export function useCards(filterTags?: string[]) {
   const cards = useLiveQuery(async () => {
@@ -22,6 +22,12 @@ export function useCards(filterTags?: string[]) {
     tags: string[]
   ): Promise<Card> => {
     const now = Date.now()
+    // Check if this card's topic is activated
+    const activatedTopics = await getActivatedTopics()
+    const tempCard = { tags } as Card
+    const topic = getCardTopic(tempCard)
+    const isActive = activatedTopics.has(topic)
+
     const card: Card = {
       id: uuidv4(),
       front,
@@ -33,7 +39,7 @@ export function useCards(filterTags?: string[]) {
       ease_factor: 2.5,
       interval: 0,
       repetitions: 0,
-      next_review: now,
+      next_review: isActive ? now : INACTIVE_NEXT_REVIEW,
       sync_status: 'pending',
     }
     await db.cards.put(card)
@@ -59,7 +65,9 @@ export function useCards(filterTags?: string[]) {
     })
   }
 
-  const importCards = async (cards: Card[]) => {
+  const importCards = async (cards: Card[]): Promise<{ added: number; updated: number }> => {
+    let added = 0
+    let updated = 0
     // Deduplicate: if front matches existing card, update instead
     for (const card of cards) {
       const existing = await db.cards
@@ -73,10 +81,13 @@ export function useCards(filterTags?: string[]) {
           updated_at: Date.now(),
           sync_status: 'pending',
         })
+        updated++
       } else {
         await db.cards.put(card)
+        added++
       }
     }
+    return { added, updated }
   }
 
   return { cards: cards ?? [], addCard, updateCard, deleteCard, importCards }

@@ -23,7 +23,7 @@ export function TopicBreakdown({ topics, fachLabel }: TopicBreakdownProps) {
               {topic.topic}
             </span>
             <span className="text-xs text-zinc-500">
-              {topic.score}% · {topic.totalCards} Karten
+              {topic.score}% · {topic.masteredCards}/{topic.totalCards}
             </span>
           </div>
           <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">

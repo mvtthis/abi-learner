@@ -4,6 +4,8 @@ interface TagTreeProps {
   tags: string[]
   selectedTags: string[]
   onToggle: (tag: string) => void
+  /** When true, clicking a parent selects/deselects all children */
+  cascadeSelection?: boolean
 }
 
 interface TreeNode {
@@ -43,31 +45,71 @@ function buildTree(tags: string[]): TreeNode {
   return root
 }
 
+/** Collect all descendant paths from a node (inclusive) */
+function collectPaths(node: TreeNode): string[] {
+  const paths = [node.fullPath]
+  for (const child of node.children.values()) {
+    paths.push(...collectPaths(child))
+  }
+  return paths
+}
+
 function TreeItem({
   node,
   selectedTags,
   onToggle,
   depth,
+  cascadeSelection,
+  allTags,
 }: {
   node: TreeNode
   selectedTags: string[]
   onToggle: (tag: string) => void
   depth: number
+  cascadeSelection: boolean
+  allTags: string[]
 }) {
   const [expanded, setExpanded] = useState(depth < 1)
   const hasChildren = node.children.size > 0
+
+  // A node is selected if it or any descendant is in selectedTags
   const isSelected = selectedTags.some(
     (t) =>
-      t === node.fullPath || t.startsWith(node.fullPath + '::')
+      t === node.fullPath ||
+      t.startsWith(node.fullPath + '::') ||
+      node.fullPath.startsWith(t + '::')
   )
+
+  const handleClick = () => {
+    if (cascadeSelection && hasChildren) {
+      // Get all leaf-level tags under this node
+      const descendantTags = allTags.filter(
+        (t) => t === node.fullPath || t.startsWith(node.fullPath + '::')
+      )
+      const allDescendantsSelected = descendantTags.length > 0 &&
+        descendantTags.every((t) => selectedTags.includes(t))
+
+      if (allDescendantsSelected) {
+        // Deselect all descendants
+        for (const t of descendantTags) {
+          if (selectedTags.includes(t)) onToggle(t)
+        }
+      } else {
+        // Select all descendants that aren't selected
+        for (const t of descendantTags) {
+          if (!selectedTags.includes(t)) onToggle(t)
+        }
+      }
+    } else {
+      onToggle(node.fullPath)
+    }
+    if (hasChildren && !expanded) setExpanded(true)
+  }
 
   return (
     <div>
       <button
-        onClick={() => {
-          onToggle(node.fullPath)
-          if (hasChildren && !expanded) setExpanded(true)
-        }}
+        onClick={handleClick}
         className={`w-full text-left px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 transition-colors ${
           isSelected
             ? 'bg-blue-600/20 text-blue-400'
@@ -98,13 +140,15 @@ function TreeItem({
             selectedTags={selectedTags}
             onToggle={onToggle}
             depth={depth + 1}
+            cascadeSelection={cascadeSelection}
+            allTags={allTags}
           />
         ))}
     </div>
   )
 }
 
-export function TagTree({ tags, selectedTags, onToggle }: TagTreeProps) {
+export function TagTree({ tags, selectedTags, onToggle, cascadeSelection = true }: TagTreeProps) {
   const tree = useMemo(() => buildTree(tags), [tags])
 
   if (tags.length === 0) {
@@ -132,6 +176,8 @@ export function TagTree({ tags, selectedTags, onToggle }: TagTreeProps) {
           selectedTags={selectedTags}
           onToggle={onToggle}
           depth={0}
+          cascadeSelection={cascadeSelection}
+          allTags={tags}
         />
       ))}
     </div>

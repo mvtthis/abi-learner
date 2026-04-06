@@ -4,7 +4,7 @@ interface CardEditorProps {
   initialFront?: string
   initialBack?: string
   initialTags?: string[]
-  onSave: (front: string, back: string, tags: string[]) => void
+  onSave: (front: string, back: string, tags: string[]) => Promise<void> | void
   onCancel: () => void
   title?: string
 }
@@ -20,15 +20,21 @@ export function CardEditor({
   const [front, setFront] = useState(initialFront)
   const [back, setBack] = useState(initialBack)
   const [tagInput, setTagInput] = useState(initialTags.join(' '))
+  const [saving, setSaving] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!front.trim() || !back.trim()) return
+    if (!front.trim() || !back.trim() || saving) return
     const tags = tagInput
       .split(/[\s,]+/)
       .map((t) => t.trim())
       .filter(Boolean)
-    onSave(front, back, tags)
+    setSaving(true)
+    try {
+      await onSave(front, back, tags)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -78,16 +84,17 @@ export function CardEditor({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700"
+          disabled={saving}
+          className="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 disabled:opacity-40"
         >
           Abbrechen
         </button>
         <button
           type="submit"
-          disabled={!front.trim() || !back.trim()}
+          disabled={!front.trim() || !back.trim() || saving}
           className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-40"
         >
-          Speichern
+          {saving ? 'Speichert...' : 'Speichern'}
         </button>
       </div>
     </form>

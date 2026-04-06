@@ -52,8 +52,11 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     setImporting(true)
     const parsed = parseAnkiFile(parsedContent)
     const cards = parsedCardsToCards(parsed.cards)
-    await importCards(cards)
-    setResult(`${cards.length} Karten importiert!`)
+    const { added, updated } = await importCards(cards)
+    const parts: string[] = []
+    if (added > 0) parts.push(`${added} neu`)
+    if (updated > 0) parts.push(`${updated} aktualisiert`)
+    setResult(parts.length > 0 ? parts.join(', ') : 'Keine Änderungen')
     setImporting(false)
     setPreview(null)
     setParsedContent(null)

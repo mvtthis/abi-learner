@@ -1,0 +1,30 @@
+#separator:tab
+#html:true
+#tags column:3
+Welche Ionen sind innen und außen bei der Nervenzelle?	Innen: Viel *K⁺*, wenig Na⁺. Außen: Viel *Na⁺*, wenig K⁺.	bio::neuro::ruhepotenzial
+Warum ist das Innere der Zelle negativ geladen?	K⁺-Leckkanäle sind offen → K⁺ diffundiert raus → negative Ladungen (Proteine) bleiben innen.	bio::neuro::ruhepotenzial
+Was macht die Na⁺/K⁺-ATPase?	Pumpt 3 Na⁺ raus und 2 K⁺ rein pro ATP. Hält den Ionengradienten aufrecht.	bio::neuro::ruhepotenzial
+Wie hoch ist das Ruhepotenzial?	Ca. *-70mV*. Liegt nahe am K⁺-Gleichgewichtspotenzial (-90mV).	bio::neuro::ruhepotenzial
+Was passiert bei der Depolarisation?	Schwellenwert (-55mV) erreicht → Na⁺-Kanäle öffnen → Na⁺ strömt ein → Membran wird positiv (bis +30mV).	bio::neuro::aktionspotenzial
+Was passiert bei der Repolarisation?	Na⁺-Kanäle werden inaktiviert. K⁺-Kanäle öffnen verzögert → K⁺ strömt aus → Potenzial sinkt.	bio::neuro::aktionspotenzial
+Was ist die Hyperpolarisation?	K⁺-Kanäle schließen verzögert → kurzzeitig *negativer* als -70mV. Danach Rückkehr zum Ruhepotenzial.	bio::neuro::aktionspotenzial
+Was besagt das Alles-oder-Nichts-Prinzip?	Schwellenwert erreicht → volles AP. Nicht erreicht → nichts. Kein "halb".	bio::neuro::aktionspotenzial
+Wie wird die Reizstärke codiert?	Nicht über die Amplitude (die ist immer gleich), sondern über die *Frequenz* der Aktionspotenziale.	bio::neuro::aktionspotenzial
+Was ist die absolute Refraktärzeit?	Na⁺-Kanäle sind inaktiviert → *kein neues AP möglich*. Sichert die Ausbreitungsrichtung.	bio::neuro::aktionspotenzial
+Was ist saltatorische Erregungsleitung?	AP springt von *Schnürring zu Schnürring* bei myelinisierten Fasern. Schnell (~120 m/s).	bio::neuro::erregungsleitung
+Warum ist saltatorische Leitung schneller?	Die Myelinscheide isoliert das Axon. APs müssen nur an den Schnürringen neu erzeugt werden.	bio::neuro::erregungsleitung
+Was löst die Transmitterfreisetzung an der Synapse aus?	*Ca²⁺-Einstrom* ins Endknöpfchen → Vesikel verschmelzen mit der Membran → Transmitter wird freigesetzt.	bio::neuro::synapse
+Was ist ein EPSP?	Erregend: Na⁺-Kanäle öffnen → Depolarisation → bringt die Zelle *näher* an den Schwellenwert.	bio::neuro::synapse
+Was ist ein IPSP?	Hemmend: Cl⁻/K⁺-Kanäle öffnen → Hyperpolarisation → entfernt die Zelle *vom* Schwellenwert.	bio::neuro::synapse
+Was ist räumliche Summation?	Mehrere Synapsen an verschiedenen Stellen feuern *gleichzeitig* → EPSPs/IPSPs addieren sich.	bio::neuro::synapse
+Was ist zeitliche Summation?	Eine Synapse feuert *mehrmals schnell hintereinander* → EPSPs addieren sich.	bio::neuro::synapse
+Wo werden alle Signale verrechnet?	Am *Axonhügel*. Nur wenn Summe aller EPSPs minus IPSPs den Schwellenwert überschreitet → AP.	bio::neuro::synapse
+Wie wird das Signal an der Synapse beendet?	Transmitter wird *enzymatisch abgebaut* (z.B. durch Acetylcholinesterase), wiederaufgenommen oder diffundiert weg.	bio::neuro::synapse
+Wie wirkt Curare?	Blockiert den ACh-Rezeptor (kompetitiver Antagonist) → kein Signal → *Muskellähmung*.	bio::neuro::gifte
+Wie wirkt E605?	Hemmt die Acetylcholinesterase *irreversibel* → ACh wird nicht abgebaut → Dauererregung → Krämpfe.	bio::neuro::gifte
+Wie wirkt Nikotin?	Aktiviert den ACh-Rezeptor wie ACh (*Agonist*), wird aber nicht abgebaut → verlängerte Wirkung.	bio::neuro::gifte
+Wie wirkt Botox?	Verhindert die *Vesikelfusion* → kein Transmitter wird freigesetzt → schlaffe Lähmung.	bio::neuro::gifte
+Was macht der Sympathikus?	Aktivierung, Stress. "Fight or flight". Transmitter: *Noradrenalin*.	bio::neuro::nervensystem
+Was macht der Parasympathikus?	Entspannung, Regeneration. "Rest and digest". Transmitter: *Acetylcholin*.	bio::neuro::nervensystem
+Was ist ein Rezeptorpotenzial?	Ein graduiertes Signal an Sinneszellen — proportional zur Reizstärke. Bestimmt die AP-Frequenz.	bio::neuro::sinne
+Was bedeutet Adaptation bei Rezeptoren?	Empfindlichkeit nimmt bei anhaltendem Reiz ab. Tonisch = langsam, phasisch = schnell.	bio::neuro::sinne

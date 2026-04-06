@@ -1,100 +1,76 @@
 import { useState, useCallback, useEffect } from 'react'
-import { db, type Card } from '@/lib/db'
-import { getSettings } from '@/lib/db'
+import { db, type Card, INACTIVE_NEXT_REVIEW, getActivatedTopics } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
+import { sortForSession, REAPPEAR_GAP } from '@/lib/leitner'
 
 export interface ReviewSession {
-  cards: Card[]
-  currentIndex: number
+  queue: Card[]
   currentCard: Card | null
   isFlipped: boolean
   isComplete: boolean
   totalCards: number
   reviewedCount: number
-  againQueue: Card[]
+  correctCount: number
 }
 
 export function useReviewSession(filterTags?: string[]) {
   const [session, setSession] = useState<ReviewSession>({
-    cards: [],
-    currentIndex: 0,
+    queue: [],
     currentCard: null,
     isFlipped: false,
     isComplete: false,
     totalCards: 0,
     reviewedCount: 0,
-    againQueue: [],
+    correctCount: 0,
   })
   const [loading, setLoading] = useState(true)
   const { reviewCard } = useSpacedRepetition()
 
   const loadSession = useCallback(async () => {
     setLoading(true)
-    const settings = await getSettings()
     const now = Date.now()
+    const activatedTopics = await getActivatedTopics()
 
-    // Get due cards
-    let allCards = await db.cards
-      .filter((c) => !c.deleted && c.next_review <= now)
+    const isInActivatedTopic = (card: Card) =>
+      card.tags.some((tag) => {
+        const parts = tag.split('::')
+        if (parts.length < 2) return activatedTopics.has(parts[0])
+        const topicKey = parts.slice(0, 2).join('::')
+        return activatedTopics.has(topicKey)
+      })
+
+    // Due review cards (already in algorithm, next_review reached)
+    const reviewCards = await db.cards
+      .filter((c) => !c.deleted && c.repetitions > 0 && c.next_review <= now)
       .toArray()
 
-    // Get new cards (never reviewed)
-    let newCards = await db.cards
-      .filter((c) => !c.deleted && c.repetitions === 0 && c.next_review <= now)
+    // New cards from activated topics (never reviewed)
+    const newCards = await db.cards
+      .filter((c) => !c.deleted && c.repetitions === 0 && isInActivatedTopic(c))
       .toArray()
+
+    let allDueCards = [...reviewCards, ...newCards]
 
     // Apply tag filter
     if (filterTags && filterTags.length > 0) {
-      allCards = allCards.filter((card) =>
-        filterTags.some((ft) =>
-          card.tags.some((t) => t.toLowerCase().startsWith(ft.toLowerCase()))
-        )
-      )
-      newCards = newCards.filter((card) =>
+      allDueCards = allDueCards.filter((card) =>
         filterTags.some((ft) =>
           card.tags.some((t) => t.toLowerCase().startsWith(ft.toLowerCase()))
         )
       )
     }
 
-    // Limit new cards per day
-    const todayStart = new Date()
-    todayStart.setHours(0, 0, 0, 0)
-    const todayReviews = await db.reviewLogs
-      .where('reviewed_at')
-      .aboveOrEqual(todayStart.getTime())
-      .toArray()
-
-    const newCardsReviewedToday = new Set(
-      todayReviews
-        .filter((r) => {
-          const card = allCards.find((c) => c.id === r.card_id)
-          return card && card.repetitions <= 1
-        })
-        .map((r) => r.card_id)
-    )
-
-    const newCardLimit = Math.max(
-      0,
-      settings.new_cards_per_day - newCardsReviewedToday.size
-    )
-
-    // Separate review cards and new cards
-    const reviewCards = allCards.filter((c) => c.repetitions > 0)
-    const limitedNewCards = newCards.slice(0, newCardLimit)
-
-    // Shuffle and combine
-    const sessionCards = [...shuffle(reviewCards), ...shuffle(limitedNewCards)]
+    // Sort: lowest level first, shuffle within levels
+    const sorted = sortForSession(allDueCards)
 
     setSession({
-      cards: sessionCards,
-      currentIndex: 0,
-      currentCard: sessionCards[0] ?? null,
+      queue: sorted.slice(1),
+      currentCard: sorted[0] ?? null,
       isFlipped: false,
-      isComplete: sessionCards.length === 0,
-      totalCards: sessionCards.length,
+      isComplete: sorted.length === 0,
+      totalCards: sorted.length,
       reviewedCount: 0,
-      againQueue: [],
+      correctCount: 0,
     })
     setLoading(false)
   }, [filterTags])
@@ -107,98 +83,82 @@ export function useReviewSession(filterTags?: string[]) {
     setSession((s) => ({ ...s, isFlipped: true }))
   }
 
-  const answer = async (quality: number) => {
+  const answer = async (correct: boolean) => {
     if (!session.currentCard) return
 
-    await reviewCard(session.currentCard.id, quality)
+    const result = await reviewCard(session.currentCard.id, correct)
 
     setSession((prev) => {
-      const newAgainQueue =
-        quality <= 1
-          ? [...prev.againQueue, prev.currentCard!]
-          : prev.againQueue
-
-      const nextIndex = prev.currentIndex + 1
+      const newQueue = [...prev.queue]
       const reviewedCount = prev.reviewedCount + 1
+      const correctCount = prev.correctCount + (correct ? 1 : 0)
 
-      // Check if we still have cards in the main queue
-      if (nextIndex < prev.cards.length) {
-        return {
-          ...prev,
-          currentIndex: nextIndex,
-          currentCard: prev.cards[nextIndex],
-          isFlipped: false,
-          reviewedCount,
-          againQueue: newAgainQueue,
-        }
+      // If wrong, reinsert card further in queue
+      if (!correct && prev.currentCard) {
+        const insertAt = Math.min(REAPPEAR_GAP, newQueue.length)
+        newQueue.splice(insertAt, 0, prev.currentCard)
       }
 
-      // Check "again" queue
-      if (newAgainQueue.length > 0) {
-        const againCards = [...newAgainQueue]
-        return {
-          ...prev,
-          cards: [...prev.cards, ...againCards],
-          currentIndex: nextIndex,
-          currentCard: againCards[0],
-          isFlipped: false,
-          totalCards: prev.totalCards + againCards.length,
-          reviewedCount,
-          againQueue: [],
-        }
-      }
+      const nextCard = newQueue.shift() ?? null
 
-      // Session complete
       return {
-        ...prev,
-        currentCard: null,
+        queue: newQueue,
+        currentCard: nextCard,
         isFlipped: false,
-        isComplete: true,
+        isComplete: nextCard === null,
+        totalCards: prev.totalCards,
         reviewedCount,
-        againQueue: [],
+        correctCount,
       }
     })
   }
 
-  const dueCount = session.totalCards
-
-  return { session, loading, flip, answer, dueCount, reload: loadSession }
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
+  return { session, loading, flip, answer, reload: loadSession }
 }
 
 export function useDueCount(filterTags?: string[]) {
-  const [count, setCount] = useState(0)
+  const [reviewCount, setReviewCount] = useState(0)
+  const [newCount, setNewCount] = useState(0)
 
   useEffect(() => {
     const load = async () => {
       const now = Date.now()
-      let dueCards = await db.cards
-        .filter((c) => !c.deleted && c.next_review <= now)
+      const activatedTopics = await getActivatedTopics()
+
+      const isInActivatedTopic = (card: Card) =>
+        card.tags.some((tag) => {
+          const parts = tag.split('::')
+          if (parts.length < 2) return activatedTopics.has(parts[0])
+          const topicKey = parts.slice(0, 2).join('::')
+          return activatedTopics.has(topicKey)
+        })
+
+      let reviewCards = await db.cards
+        .filter((c) => !c.deleted && c.repetitions > 0 && c.next_review <= now)
+        .toArray()
+
+      let newCards = await db.cards
+        .filter((c) => !c.deleted && c.repetitions === 0 && isInActivatedTopic(c))
         .toArray()
 
       if (filterTags && filterTags.length > 0) {
-        dueCards = dueCards.filter((card) =>
+        const matchesFilter = (card: Card) =>
           filterTags.some((ft) =>
             card.tags.some((t) =>
               t.toLowerCase().startsWith(ft.toLowerCase())
             )
           )
-        )
+        reviewCards = reviewCards.filter(matchesFilter)
+        newCards = newCards.filter(matchesFilter)
       }
-      setCount(dueCards.length)
+
+      setReviewCount(reviewCards.length)
+      setNewCount(newCards.length)
     }
     load()
     const interval = setInterval(load, 30000)
     return () => clearInterval(interval)
   }, [filterTags])
 
-  return count
+  return { reviewCount, newCount, totalCount: reviewCount + newCount }
 }

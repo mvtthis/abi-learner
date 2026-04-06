@@ -1,0 +1,28 @@
+#separator:tab
+#html:true
+#tags column:3
+Was ist natürliche Selektion?	Individuen mit vorteilhaften Merkmalen überleben und vermehren sich besser → diese Merkmale werden häufiger.	bio::evolution::theorien
+Warum ist Lamarck widerlegt?	Erworbene Eigenschaften (z.B. Muskeln durch Training) werden *nicht* vererbt — sie verändern nicht die DNA der Keimzellen.	bio::evolution::theorien
+Was ist Evolution auf genetischer Ebene?	Veränderung der *Allelfrequenzen* in einer Population über die Zeit.	bio::evolution::theorien
+Welche Evolutionsfaktoren gibt es?	*Mutation*, *Rekombination*, *Selektion*, *Gendrift*, *Genfluss* (Migration).	bio::evolution::theorien
+Was ist stabilisierende Selektion?	Der *Mittelwert* wird bevorzugt, Extreme benachteiligt. Varianz nimmt ab.	bio::evolution::selektion
+Was ist gerichtete Selektion?	Ein *Extrem* wird bevorzugt → der Mittelwert verschiebt sich. Z.B. Birkenspanner.	bio::evolution::selektion
+Was ist disruptive Selektion?	*Beide Extreme* werden bevorzugt, Mittelwert benachteiligt → kann zu Artaufspaltung führen.	bio::evolution::selektion
+Was ist allopatrische Artbildung?	Population wird durch *geografische Barriere* getrennt → getrennte Evolution → neue Arten. Häufigster Mechanismus.	bio::evolution::artbildung
+Was ist sympatrische Artbildung?	Artbildung *ohne* geografische Trennung. Z.B. durch Polyploidie oder ökologische Spezialisierung.	bio::evolution::artbildung
+Nenne 3 präzygotische Isolationsmechanismen.	Verschiedene Lebensräume (Habitat), verschiedene Fortpflanzungszeiten (temporal), verschiedene Balzrituale (Verhalten).	bio::evolution::artbildung
+Was ist Hybridsterilität?	Postzygotisch: Nachkommen sind lebensfähig aber *unfruchtbar*. Beispiel: Maultier.	bio::evolution::artbildung
+Was ist Homologie?	Gleicher Bauplan, verschiedene Funktion. Zeigt *gemeinsame Abstammung*. Z.B. Menschenarm / Vogelflügel / Walflosse.	bio::evolution::belege
+Was ist Analogie?	Gleiche Funktion, verschiedener Bauplan. Zeigt *keine* Verwandtschaft. Z.B. Vogelflügel / Insektenflügel.	bio::evolution::belege
+Was sind rudimentäre Organe?	Rückgebildete Organe ohne Funktion. Z.B. Blinddarm, Steißbein. Hinweis auf Vorfahren.	bio::evolution::belege
+Was ist der Archaeopteryx?	*Mosaikform:* Reptilmerkmale (Zähne, Krallen) + Vogelmerkmale (Federn). Belegt den Übergang Reptil → Vogel.	bio::evolution::belege
+Was ist molekulare Phylogenetik?	Verwandtschaft über *DNA-Sequenzvergleiche* bestimmen. Je ähnlicher → desto näher verwandt.	bio::evolution::belege
+Was ist die molekulare Uhr?	Mutationen häufen sich mit annähernd *konstanter Rate* an → mehr Unterschiede = länger her die Aufspaltung.	bio::evolution::belege
+Was ist konvergente Evolution?	Nicht verwandte Arten entwickeln *unabhängig ähnliche Merkmale* durch ähnlichen Selektionsdruck. Ergebnis = Analogien.	bio::evolution::belege
+Was ist die Hardy-Weinberg-Formel?	p² + 2pq + q² = 1 und p + q = 1. Gilt nur wenn *keine Evolution* stattfindet.	bio::evolution::populationsgenetik
+Wie berechnest du die Trägerhäufigkeit?	Beispiel: 16% krank → q² = 0,16 → q = 0,4 → p = 0,6 → Träger = 2pq = *48%*.	bio::evolution::populationsgenetik
+Welche Bedingungen braucht Hardy-Weinberg?	Keine Mutation, keine Selektion, große Population, keine Migration, Zufallspaarung.	bio::evolution::populationsgenetik
+Was ist der Flaschenhalseffekt?	Population wird drastisch reduziert → Überlebende = zufällige Stichprobe → Allelfrequenzen verändert.	bio::evolution::populationsgenetik
+Was ist der Gründereffekt?	Kleine Gruppe besiedelt neues Gebiet → geringe genetische Vielfalt → andere Allelfrequenzen.	bio::evolution::populationsgenetik
+Was ist Coevolution?	Zwei Arten passen sich wechselseitig aneinander an. Z.B. Blüte ↔ Bestäuber, Räuber ↔ Beute.	bio::evolution::coevolution
+Was ist adaptive Radiation?	Eine Stammart spaltet sich in viele Arten auf die verschiedene Nischen besetzen. Z.B. *Darwinfinken*.	bio::evolution::coevolution

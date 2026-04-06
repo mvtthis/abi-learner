@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCards, useAllTags } from '@/hooks/useCards'
 import { TagTree } from '@/components/TagTree'
 import { CardEditor } from '@/components/CardEditor'
+import { sanitizeHTML } from '@/lib/sanitize'
 
 export function Browse() {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -113,11 +114,11 @@ export function Browse() {
               <div>
                 <div
                   className="text-sm text-white mb-1"
-                  dangerouslySetInnerHTML={{ __html: card.front }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHTML(card.front) }}
                 />
                 <div
                   className="text-xs text-zinc-500 line-clamp-2"
-                  dangerouslySetInnerHTML={{ __html: card.back }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHTML(card.back) }}
                 />
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex flex-wrap gap-1">

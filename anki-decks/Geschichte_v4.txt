@@ -1,0 +1,48 @@
+#separator:tab
+#html:true
+#tags column:3
+Was ist der Unterschied zwischen Quelle und Darstellung?	Quelle stammt *aus der Zeit* → du analysierst die Perspektive des Verfassers. Darstellung stammt von einem späteren Historiker → du analysierst seine Deutung/These.	geschichte::methodik
+Wie erkennst du ob ein Text eine Quelle oder Darstellung ist?	Stammt der Text *aus der beschriebenen Zeit* oder *über* die beschriebene Zeit? Zeitgenosse = Quelle, späterer Autor = Darstellung.	geschichte::methodik
+Was gehört in eine quellenkritische Einleitung?	WER (Autor + Funktion), WANN (Datum + Kontext), WAS (Textsorte), AN WEN (Adressat), WORÜBER (Thema).	geschichte::methodik
+Warum benutzt du bei Quellen den Konjunktiv?	Weil du die *Perspektive des Verfassers* wiedergibst, nicht Fakten. Der Autor "betone", "fordere".	geschichte::methodik
+Was machst du bei AFB I?	Inhalt in eigenen Worten wiedergeben. Zusammenfassen, beschreiben. *Nicht* bewerten oder deuten.	geschichte::methodik::operatoren
+Was machst du bei AFB II bei einer Quelle?	Argumentation, Sprache, Intention und *Perspektivität* des Verfassers herausarbeiten.	geschichte::methodik::operatoren
+Was machst du bei AFB II bei einer Darstellung?	Die *These* des Autors identifizieren, seine Argumente prüfen, seine historische Deutung einordnen.	geschichte::methodik::operatoren
+Was ist der Unterschied zwischen Beurteilen und Bewerten?	*Beurteilen* = Sachurteil (historischer Stellenwert, ohne persönliche Wertung). *Bewerten* = Werturteil (Sachurteil + eigene Wertmaßstäbe, z.B. Menschenrechte).	geschichte::methodik::operatoren
+Was bedeutet Erörtern als Operator?	Pro und Contra abwägen → zu einem *begründeten Fazit* kommen.	geschichte::methodik::operatoren
+Wie bestimmt die Textsorte die Analyse?	Rede → Überzeugung. Tagebuch → subjektiv/privat. Propaganda → Mobilisierung. Das beeinflusst wie du Perspektivität bewertest.	geschichte::methodik
+Was ist eine Krise nach Koselleck?	Eine *Entscheidungssituation mit offenem Ausgang* — es kann besser oder schlechter werden.	geschichte::kernmodule::km1
+Was ist eine Revolution nach Arendt?	Ein *Neuanfang* der auf die Gründung von Freiheit zielt.	geschichte::kernmodule::km1
+Wie wendest du Arendt auf die Oktoberrevolution an?	Revolution = Gründung von Freiheit. Oktoberrevolution führte zu Diktatur → *keine Revolution* nach Arendt, sondern Machtübernahme.	geschichte::kernmodule::km1
+Was ist das Brinton-Phasenmodell?	Altes Regime → Moderate → Radikale → Thermidor (Mäßigung).	geschichte::kernmodule::km1
+Wie wendest du Brinton auf Russland an?	Zar (Altes Regime) → Provisorische Regierung (Moderate) → Bolschewiki (Radikale) → NEP/Stalin (Thermidor).	geschichte::kernmodule::km1
+Was ist die Davies J-Kurve?	Steigende Erwartungen + plötzlicher Einbruch = Revolution.	geschichte::kernmodule::km1
+Wie wendest du die J-Kurve auf Russland 1917 an?	Nach 1905: Duma, Wirtschaftswachstum → Erwartungen steigen. Ab 1914: Krieg → Erwartungen brechen ein → Februarrevolution.	geschichte::kernmodule::km1
+Was sind Bitterlis 4 Stufen des Kulturkontakts?	Berührung → Zusammenstoß → Beziehung → Verflechtung.	geschichte::kernmodule::km2
+Wie wendest du Bitterli auf China an?	Macartney 1793 = Berührung. Opiumkriege = Zusammenstoß. Vertragshäfen = erzwungene Beziehung.	geschichte::kernmodule::km2
+Was ist der Unterschied zwischen formeller und informeller Herrschaft?	*Formell:* Direkte Kolonialherrschaft (z.B. Indien). *Informell:* Wirtschaftliche/politische Kontrolle ohne direkte Regierung (z.B. China).	geschichte::kernmodule::km2
+Warum ist China nach Osterhammel eine Halbkolonie?	Nie formal kolonisiert, aber durch ungleiche Verträge, Pachtgebiete und Exterritorialität *informell kontrolliert*.	geschichte::kernmodule::km2
+Was ist der Unterschied zwischen Kulturnation und Staatsnation?	*Kulturnation:* Zusammengehörigkeit durch Sprache/Kultur/Geschichte. *Staatsnation:* Durch Staatsbürgerschaft und Verfassung.	geschichte::kernmodule::km3
+Was ist Geschichtsbewusstsein nach Jeismann?	Verknüpfung von *Vergangenheitsdeutung* + *Gegenwartsverständnis* + *Zukunftserwartung*.	geschichte::kernmodule::km4
+Was ist der Unterschied zwischen kommunikativem und kulturellem Gedächtnis?	*Kommunikativ:* Mündlich, ca. 80 Jahre, stirbt mit Zeitzeugen. *Kulturell:* Institutionalisiert (Denkmäler, Texte), überdauert Generationen.	geschichte::kernmodule::km4
+Was ist ein historischer Mythos?	Eine emotional aufgeladene, vereinfachte Erzählung. Funktionen: Legitimation, Identität, Mobilisierung, Komplexitätsreduktion.	geschichte::kernmodule::km4
+Was ist der Unterschied zwischen Geschichtskultur und Geschichtspolitik?	*Geschichtskultur* = alle Formen öffentlicher Geschichtspräsenz. *Geschichtspolitik* = bewusste Instrumentalisierung für politische Ziele.	geschichte::kernmodule::km4
+Was sind die 3 Dimensionen der Geschichtskultur nach Rüsen?	Kognitiv (Wissenschaft), ästhetisch (Kunst, Film), politisch (Legitimation, Identität).	geschichte::kernmodule::km4
+Warum scheiterte die Revolution 1905?	Oktobermanifest versprach Reformen (Duma), aber der Zar behielt die Macht → *Scheinreform*.	geschichte::wahlmodul1::russische_revolutionen
+Warum war der WK1 Katalysator der russischen Revolution?	Hunger, Niederlagen, Millionen Tote → Vertrauensverlust → Streiks → Februarrevolution.	geschichte::wahlmodul1::russische_revolutionen
+Was war die Doppelherrschaft?	Provisorische Regierung (Kerenski) und Petrograder Sowjet beanspruchten *gleichzeitig* die Macht.	geschichte::wahlmodul1::russische_revolutionen
+Was war die historische Realität der Oktoberrevolution?	Ein Putsch einer kleinen Kaderpartei. Kaum Widerstand, Bevölkerung passiv.	geschichte::wahlmodul1::russische_revolutionen
+Wie wurde der Mythos Oktoberrevolution aufgebaut?	Lenin als Held, Eisenstein-Film "Oktober" (1927), Feiertage, Umbenennungen → *Legitimation der Sowjetherrschaft*.	geschichte::wahlmodul4::mythen
+Was passierte mit dem Mythos nach 1991?	Dekonstruktion — die Oktoberrevolution wurde als Putsch *neu bewertet*.	geschichte::wahlmodul4::mythen
+Was war das Ergebnis der Macartney-Mission 1793?	Kaiser lehnte britische Handelsbeziehungen ab. China sah keinen Bedarf. Erste *Berührung* die scheiterte.	geschichte::wahlmodul2::china_imperialismus
+Was war das Ergebnis des 1. Opiumkriegs?	Vertrag von Nanjing (1842): Hongkong an GB, 5 Vertragshäfen, Exterritorialität → Beginn der "Ungleichen Verträge".	geschichte::wahlmodul2::china_imperialismus
+Warum scheiterte die Selbststärkungsbewegung in China?	Versuchte westliche Technik zu übernehmen ohne das politische System zu ändern → halbherzige Modernisierung.	geschichte::wahlmodul2::china_imperialismus
+Was ist die Fischer-These?	Deutschland trug die *Hauptschuld* am WK1 — bewusster "Griff nach der Weltmacht".	geschichte::wahlmodul3::erster_weltkrieg
+Was ist Clarks Gegenposition?	Die Mächte waren *alle* verantwortlich — sie "schlafwandelten" in den Krieg.	geschichte::wahlmodul3::erster_weltkrieg
+Wie ist die Kriegsschulddebatte ein Beispiel für Geschichtskultur?	Fischer vs. Clark zeigt dass Geschichtsdeutung sich mit der Zeit verändert — Beispiel für Rüsens *kognitive Dimension*.	geschichte::wahlmodul3::erster_weltkrieg
+Ist "Urkatastrophe" ein neutraler Begriff?	Nein — ein *Narrativ* (Kennan). Betont die Folgen des WK1 als Ursprung späterer Katastrophen. Andere Perspektiven werden ausgeblendet.	geschichte::wahlmodul3::erster_weltkrieg
+Wie verknüpfst du RT1 und RT3?	WK1 war der *Katalysator* der Revolution. Ohne den Krieg keine Februarrevolution. Brest-Litowsk verbindet beide.	geschichte::verknuepfungen
+Wie verknüpfst du RT1 und RT4?	Die Oktoberrevolution ist gleichzeitig *Ereignis* (RT1) und *Mythos* (RT4). Arendt-Frage: Revolution oder Putsch?	geschichte::verknuepfungen
+Wie verknüpfst du RT2 und KM2?	Bitterli ist direkt auf China anwendbar (4 Stufen). Osterhammel erklärt warum China eine *Halbkolonie* war.	geschichte::verknuepfungen
+Wie verknüpfst du RT1 und RT2?	Beide zeigen *gescheiterte Modernisierung*: Russland und China versuchten sich zu reformieren und scheiterten → Revolution/Umbruch.	geschichte::verknuepfungen
+Welche Wehler-Subprozesse passen auf Russland?	Wirtschaftswachstum (Industrialisierung ab 1890er), Mobilisierung (Arbeiterstreiks), Partizipation (Duma-Forderung) — aber fehlende Institutionalisierung → Revolution.	geschichte::kernmodule::km1
