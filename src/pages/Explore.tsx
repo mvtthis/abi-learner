@@ -20,20 +20,60 @@ export function Explore() {
     usePublicDecks(user?.id ?? null)
   const [importingAll, setImportingAll] = useState(false)
   const [importAllResult, setImportAllResult] = useState<string | null>(null)
+  const [confirmReset, setConfirmReset] = useState(false)
+  const [reimportingSubject, setReimportingSubject] = useState<string | null>(null)
 
   const handleImportAll = async (clearFirst: boolean) => {
     setImportingAll(true)
     setImportAllResult(null)
+    setConfirmReset(false)
 
     if (clearFirst) {
       await db.cards.clear()
       await db.reviewLogs.clear()
+      await db.activatedTopics.clear()
       localStorage.removeItem('abi-learner-imported-decks')
     }
 
     const count = await importAllDecks()
     setImportAllResult(`${count} Karten importiert!`)
     setImportingAll(false)
+  }
+
+  const handleReimportSubject = async (subject: string) => {
+    setReimportingSubject(subject)
+
+    // Delete existing cards for this subject
+    const subjectCards = await db.cards
+      .filter((c) => c.tags.some((t) => t.toLowerCase().startsWith(subject + '::')))
+      .toArray()
+
+    const cardIds = subjectCards.map((c) => c.id)
+    if (cardIds.length > 0) {
+      await db.cards.bulkDelete(cardIds)
+      // Delete related review logs
+      const logs = await db.reviewLogs
+        .filter((r) => cardIds.includes(r.card_id))
+        .toArray()
+      await db.reviewLogs.bulkDelete(logs.map((l) => l.id))
+      // Remove activated topics for this subject
+      const topics = await db.activatedTopics
+        .filter((t) => t.topic.toLowerCase().startsWith(subject + '::'))
+        .toArray()
+      for (const t of topics) {
+        await db.activatedTopics.delete(t.topic)
+      }
+    }
+
+    // Import all decks for this subject
+    const subjectDecks = decks.filter((d) => d.subject === subject)
+    let count = 0
+    for (const deck of subjectDecks) {
+      count += await importDeck(deck.id)
+    }
+
+    setImportAllResult(`${SUBJECT_LABELS[subject]}: ${count} Karten neu importiert!`)
+    setReimportingSubject(null)
   }
 
   if (!isSupabaseConfigured()) {
@@ -72,12 +112,42 @@ export function Explore() {
     <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
       <h2 className="text-lg font-bold text-white">Deck-Bibliothek</h2>
 
-      {/* Import All Button */}
+      {/* Import All */}
       {decks.length > 0 && (
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
           {importAllResult ? (
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-3 text-center">
               <p className="text-emerald-400 text-sm font-medium">{importAllResult}</p>
+              <button
+                onClick={() => setImportAllResult(null)}
+                className="text-zinc-500 text-xs mt-2 hover:text-zinc-300"
+              >
+                Schließen
+              </button>
+            </div>
+          ) : confirmReset ? (
+            <div className="space-y-3">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
+                <p className="text-red-400 text-sm font-medium">Achtung!</p>
+                <p className="text-zinc-400 text-xs mt-1">
+                  Das löscht alle Karten und deinen gesamten Lernfortschritt unwiderruflich.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmReset(false)}
+                  className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={() => handleImportAll(true)}
+                  disabled={importingAll}
+                  className="flex-1 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-500 disabled:opacity-50"
+                >
+                  {importingAll ? 'Lösche & importiere...' : 'Ja, alles zurücksetzen'}
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -86,25 +156,22 @@ export function Explore() {
               </p>
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleImportAll(true)}
+                  onClick={() => setConfirmReset(true)}
                   disabled={importingAll}
-                  className="flex-1 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
+                  className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 disabled:opacity-50 transition-colors"
                 >
-                  {importingAll ? 'Importiere...' : 'Alle neu importieren'}
+                  Alle neu importieren
                 </button>
                 {!allImported && (
                   <button
                     onClick={() => handleImportAll(false)}
                     disabled={importingAll}
-                    className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 disabled:opacity-50 transition-colors"
+                    className="flex-1 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
                   >
-                    Fehlende hinzufügen
+                    {importingAll ? 'Importiere...' : 'Fehlende hinzufügen'}
                   </button>
                 )}
               </div>
-              <p className="text-zinc-600 text-[10px]">
-                "Alle neu importieren" löscht bestehende Karten + Lernfortschritt
-              </p>
             </>
           )}
         </div>
@@ -116,27 +183,44 @@ export function Explore() {
         </p>
       )}
 
-      {SUBJECT_ORDER.filter((s) => grouped.has(s)).map((subject) => (
-        <div key={subject}>
-          <h3 className="text-sm font-semibold text-zinc-400 mb-2">
-            {SUBJECT_LABELS[subject] ?? subject}
-          </h3>
-          <div className="grid grid-cols-1 gap-2">
-            {grouped.get(subject)!.map((deck) => (
-              <DeckCard
-                key={deck.id}
-                name={deck.name}
-                description={deck.description}
-                emoji={deck.emoji}
-                cardCount={deck.card_count}
-                isImported={importedDeckIds.includes(deck.id)}
-                isImporting={importing === deck.id}
-                onImport={() => importDeck(deck.id)}
-              />
-            ))}
+      {SUBJECT_ORDER.filter((s) => grouped.has(s)).map((subject) => {
+        const subjectDecks = grouped.get(subject)!
+        const subjectImported = subjectDecks.every((d) => importedDeckIds.includes(d.id))
+        const isReimporting = reimportingSubject === subject
+
+        return (
+          <div key={subject}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-zinc-400">
+                {SUBJECT_LABELS[subject] ?? subject}
+              </h3>
+              {subjectImported && (
+                <button
+                  onClick={() => handleReimportSubject(subject)}
+                  disabled={isReimporting || importingAll}
+                  className="text-[10px] text-zinc-600 hover:text-zinc-400 disabled:opacity-50"
+                >
+                  {isReimporting ? 'Importiere...' : 'Neu importieren'}
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {subjectDecks.map((deck) => (
+                <DeckCard
+                  key={deck.id}
+                  name={deck.name}
+                  description={deck.description}
+                  emoji={deck.emoji}
+                  cardCount={deck.card_count}
+                  isImported={importedDeckIds.includes(deck.id)}
+                  isImporting={importing === deck.id}
+                  onImport={() => importDeck(deck.id)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
