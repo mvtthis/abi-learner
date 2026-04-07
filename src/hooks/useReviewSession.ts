@@ -82,7 +82,7 @@ export function useReviewSession(filterTags?: string[]) {
   }, [loadSession])
 
   const flip = () => {
-    setSession((s) => ({ ...s, isFlipped: true }))
+    setSession((s) => ({ ...s, isFlipped: !s.isFlipped }))
   }
 
   const answer = async (correct: boolean) => {
