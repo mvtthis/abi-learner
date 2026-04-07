@@ -36,14 +36,18 @@ function processCardHTML(html: string): string {
  * Extract Fach (subject) and Unterthema (subtopic) from tags.
  * Tags follow "Fach::Unterthema::Detail" pattern.
  */
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 function getTopicInfo(tags: string[]): { fach: string; topic: string } | null {
   for (const tag of tags) {
     const parts = tag.split('::')
     if (parts.length >= 2) {
-      return { fach: parts[0], topic: parts[1] }
+      return { fach: capitalize(parts[0]), topic: capitalize(parts[1]) }
     }
     if (parts.length === 1 && parts[0]) {
-      return { fach: parts[0], topic: '' }
+      return { fach: capitalize(parts[0]), topic: '' }
     }
   }
   return null
