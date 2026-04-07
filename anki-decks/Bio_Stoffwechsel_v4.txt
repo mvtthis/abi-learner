@@ -2,38 +2,38 @@
 #html:true
 #tags column:3
 Was besagt das Schlüssel-Schloss-Prinzip?	Das Substrat passt genau ins aktive Zentrum des Enzyms → nur passende Substrate werden umgesetzt.	bio::stoffwechsel::enzymatik
-Was ist der Unterschied zum Induced-Fit-Modell?	Beim Induced Fit passt sich das aktive Zentrum *nach* der Bindung an das Substrat an — es ist nicht starr.	bio::stoffwechsel::enzymatik
-Was passiert bei kompetitiver Hemmung?	Ein Inhibitor besetzt das *aktive Zentrum*, weil er dem Substrat ähnlich sieht.	bio::stoffwechsel::enzymatik
-Wie hebt man kompetitive Hemmung auf?	Durch Erhöhung der *Substratkonzentration* — das Substrat verdrängt den Inhibitor.	bio::stoffwechsel::enzymatik
-Was passiert bei allosterischer Hemmung?	Der Inhibitor bindet an einer *anderen Stelle* → das Enzym ändert seine Form → Substrat passt nicht mehr.	bio::stoffwechsel::enzymatik
+Was ist der Unterschied zum Induced-Fit-Modell?	Beim Induced Fit passt sich das aktive Zentrum <i>nach</i> der Bindung an das Substrat an — es ist nicht starr.	bio::stoffwechsel::enzymatik
+Was passiert bei kompetitiver Hemmung?	Ein Inhibitor besetzt das <i>aktive Zentrum</i>, weil er dem Substrat ähnlich sieht.	bio::stoffwechsel::enzymatik
+Wie hebt man kompetitive Hemmung auf?	Durch Erhöhung der <i>Substratkonzentration</i> — das Substrat verdrängt den Inhibitor.	bio::stoffwechsel::enzymatik
+Was passiert bei allosterischer Hemmung?	Der Inhibitor bindet an einer <i>anderen Stelle</i> → das Enzym ändert seine Form → Substrat passt nicht mehr.	bio::stoffwechsel::enzymatik
 Kann man allosterische Hemmung durch mehr Substrat aufheben?	Nein. Der Inhibitor sitzt nicht am aktiven Zentrum — mehr Substrat hilft nicht.	bio::stoffwechsel::enzymatik
-Was ist Endprodukthemmung?	Das Endprodukt einer Reaktionskette hemmt allosterisch das *erste* Enzym → Selbstregulation.	bio::stoffwechsel::enzymatik
-Was passiert mit Enzymen bei zu hoher Temperatur?	Sie *denaturieren* — die Tertiärstruktur geht kaputt, das aktive Zentrum verliert seine Form. Irreversibel.	bio::stoffwechsel::enzymatik
+Was ist Endprodukthemmung?	Das Endprodukt einer Reaktionskette hemmt allosterisch das <i>erste</i> Enzym → Selbstregulation.	bio::stoffwechsel::enzymatik
+Was passiert mit Enzymen bei zu hoher Temperatur?	Sie <i>denaturieren</i> — die Tertiärstruktur geht kaputt, das aktive Zentrum verliert seine Form. Irreversibel.	bio::stoffwechsel::enzymatik
 Was ist K<sub>m</sub>?	Die Substratkonzentration bei halbmaximaler Reaktionsgeschwindigkeit (½ V<sub>max</sub>).	bio::stoffwechsel::enzymatik
-Was sagt ein niedriger K<sub>m</sub> aus?	Das Enzym hat eine *hohe Affinität* zum Substrat — es braucht wenig Substrat um schnell zu arbeiten.	bio::stoffwechsel::enzymatik
-Wo findet die Lichtreaktion statt?	In der *Thylakoidmembran* der Chloroplasten.	bio::stoffwechsel::fotosynthese
+Was sagt ein niedriger K<sub>m</sub> aus?	Das Enzym hat eine <i>hohe Affinität</i> zum Substrat — es braucht wenig Substrat um schnell zu arbeiten.	bio::stoffwechsel::enzymatik
+Wo findet die Lichtreaktion statt?	In der <i>Thylakoidmembran</i> der Chloroplasten.	bio::stoffwechsel::fotosynthese
 Was passiert bei der Photolyse?	Wasser wird gespalten: H₂O → 2H⁺ + 2e⁻ + ½O₂. Das O₂ ist ein Nebenprodukt.	bio::stoffwechsel::fotosynthese
-Was sind die Produkte der Lichtreaktion?	*ATP*, *NADPH+H⁺* und *O₂*.	bio::stoffwechsel::fotosynthese
+Was sind die Produkte der Lichtreaktion?	<b>ATP</b>, <b>NADPH+H⁺</b> und <b>O₂</b>.	bio::stoffwechsel::fotosynthese
 Was macht Fotosystem II?	Absorbiert Licht (P680), spaltet Wasser und gibt Elektronen an die Transportkette ab.	bio::stoffwechsel::fotosynthese
-Was macht Fotosystem I?	Absorbiert Licht (P700), nimmt Elektronen aus der Kette auf und überträgt sie → *NADPH+H⁺*.	bio::stoffwechsel::fotosynthese
-In welcher Reihenfolge arbeiten die Fotosysteme?	PS II → Elektronentransportkette → PS I → NADPH. Das nennt man *Z-Schema*.	bio::stoffwechsel::fotosynthese
-Was ist Chemiosmose?	H⁺ wird über eine Membran gepumpt → Gradient → H⁺ fließt durch *ATP-Synthase* zurück → ATP entsteht.	bio::stoffwechsel::fotosynthese
-Wo kommt Chemiosmose vor?	Bei der *Lichtreaktion* (Thylakoidmembran) und bei der *Atmungskette* (innere Mitochondrienmembran).	bio::stoffwechsel::fotosynthese
-Wo findet der Calvin-Zyklus statt?	Im *Stroma* der Chloroplasten.	bio::stoffwechsel::fotosynthese
-Was passiert in der CO₂-Fixierung des Calvin-Zyklus?	CO₂ wird durch *RuBisCO* an RuBP gebunden → es entstehen 2× 3-Phosphoglycerat (3-PG).	bio::stoffwechsel::fotosynthese
-Was passiert in der Reduktionsphase des Calvin-Zyklus?	3-PG wird mit ATP und NADPH zu *G3P* reduziert. Aus G3P wird Glucose aufgebaut.	bio::stoffwechsel::fotosynthese
+Was macht Fotosystem I?	Absorbiert Licht (P700), nimmt Elektronen aus der Kette auf und überträgt sie → <i>NADPH+H⁺</i>.	bio::stoffwechsel::fotosynthese
+In welcher Reihenfolge arbeiten die Fotosysteme?	PS II → Elektronentransportkette → PS I → NADPH. Das nennt man <i>Z-Schema</i>.	bio::stoffwechsel::fotosynthese
+Was ist Chemiosmose?	H⁺ wird über eine Membran gepumpt → Gradient → H⁺ fließt durch <i>ATP-Synthase</i> zurück → ATP entsteht.	bio::stoffwechsel::fotosynthese
+Wo kommt Chemiosmose vor?	Bei der <i>Lichtreaktion</i> (Thylakoidmembran) und bei der <i>Atmungskette</i> (innere Mitochondrienmembran).	bio::stoffwechsel::fotosynthese
+Wo findet der Calvin-Zyklus statt?	Im <i>Stroma</i> der Chloroplasten.	bio::stoffwechsel::fotosynthese
+Was passiert in der CO₂-Fixierung des Calvin-Zyklus?	CO₂ wird durch <i>RuBisCO</i> an RuBP gebunden → es entstehen 2× 3-Phosphoglycerat (3-PG).	bio::stoffwechsel::fotosynthese
+Was passiert in der Reduktionsphase des Calvin-Zyklus?	3-PG wird mit ATP und NADPH zu <i>G3P</i> reduziert. Aus G3P wird Glucose aufgebaut.	bio::stoffwechsel::fotosynthese
 Warum haben C4-Pflanzen keine Photorespiration?	Sie fixieren CO₂ zuerst mit PEP-Carboxylase (bindet kein O₂) und leiten es dann konzentriert an RuBisCO weiter.	bio::stoffwechsel::fotosynthese
-Was machen CAM-Pflanzen anders?	Sie öffnen Stomata *nachts* (CO₂ → Malat speichern), tagsüber Stomata zu → Malat → CO₂ → Calvin-Zyklus.	bio::stoffwechsel::fotosynthese
-Was ist Photorespiration?	RuBisCO bindet bei Hitze *O₂ statt CO₂* → Energieverlust ohne Nutzen (bis 50%).	bio::stoffwechsel::fotosynthese
+Was machen CAM-Pflanzen anders?	Sie öffnen Stomata <i>nachts</i> (CO₂ → Malat speichern), tagsüber Stomata zu → Malat → CO₂ → Calvin-Zyklus.	bio::stoffwechsel::fotosynthese
+Was ist Photorespiration?	RuBisCO bindet bei Hitze <i>O₂ statt CO₂</i> → Energieverlust ohne Nutzen (bis 50%).	bio::stoffwechsel::fotosynthese
 Was ist der Kompensationspunkt?	Die Lichtintensität bei der Fotosynthese = Zellatmung → netto kein Gasaustausch.	bio::stoffwechsel::fotosynthese
 Was ist das Gesetz des Minimums?	Der Faktor der am weitesten vom Optimum entfernt ist begrenzt die Gesamtrate (Liebig).	bio::stoffwechsel::fotosynthese
-Wo findet die Glykolyse statt?	Im *Cytoplasma*. Braucht keinen Sauerstoff.	bio::stoffwechsel::zellatmung
-Was ist das Ergebnis der Glykolyse?	Glucose (6C) → 2× Pyruvat (3C). Bilanz: *2 ATP* + *2 NADH+H⁺*.	bio::stoffwechsel::zellatmung
-Was passiert bei der oxidativen Decarboxylierung?	Pyruvat → *Acetyl-CoA* + CO₂. Findet in der Mitochondrienmatrix statt.	bio::stoffwechsel::zellatmung
+Wo findet die Glykolyse statt?	Im <i>Cytoplasma</i>. Braucht keinen Sauerstoff.	bio::stoffwechsel::zellatmung
+Was ist das Ergebnis der Glykolyse?	Glucose (6C) → 2× Pyruvat (3C). Bilanz: <i>2 ATP</i> + <i>2 NADH+H⁺</i>.	bio::stoffwechsel::zellatmung
+Was passiert bei der oxidativen Decarboxylierung?	Pyruvat → <i>Acetyl-CoA</i> + CO₂. Findet in der Mitochondrienmatrix statt.	bio::stoffwechsel::zellatmung
 Was ist die Bilanz des Citratzyklus pro Acetyl-CoA?	3 NADH+H⁺, 1 FADH₂, 1 GTP, 2 CO₂.	bio::stoffwechsel::zellatmung
-Wo findet die Atmungskette statt?	An der *inneren Mitochondrienmembran*.	bio::stoffwechsel::zellatmung
-Was passiert in der Atmungskette?	NADH/FADH₂ geben Elektronen ab → H⁺ wird gepumpt → ATP-Synthase → ca. *34 ATP*. Endakzeptor: O₂ → H₂O.	bio::stoffwechsel::zellatmung
-Was ist die Gesamtbilanz der Zellatmung?	C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + ca. *38 ATP*.	bio::stoffwechsel::zellatmung
-Was passiert bei der Milchsäuregärung?	Pyruvat → *Lactat*. Regeneriert NAD⁺ damit Glykolyse weiterläuft. Nur 2 ATP.	bio::stoffwechsel::zellatmung
-Was passiert bei der alkoholischen Gärung?	Pyruvat → *Ethanol + CO₂*. Nur 2 ATP. Bei Hefen.	bio::stoffwechsel::zellatmung
-Was ist der Hauptunterschied zwischen Fotosynthese und Zellatmung?	Fotosynthese *speichert* Energie (CO₂ → Glucose). Zellatmung *setzt* Energie frei (Glucose → CO₂). Gegenläufig.	bio::stoffwechsel::zellatmung
+Wo findet die Atmungskette statt?	An der <i>inneren Mitochondrienmembran</i>.	bio::stoffwechsel::zellatmung
+Was passiert in der Atmungskette?	NADH/FADH₂ geben Elektronen ab → H⁺ wird gepumpt → ATP-Synthase → ca. <i>34 ATP</i>. Endakzeptor: O₂ → H₂O.	bio::stoffwechsel::zellatmung
+Was ist die Gesamtbilanz der Zellatmung?	C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + ca. <i>38 ATP</i>.	bio::stoffwechsel::zellatmung
+Was passiert bei der Milchsäuregärung?	Pyruvat → <i>Lactat</i>. Regeneriert NAD⁺ damit Glykolyse weiterläuft. Nur 2 ATP.	bio::stoffwechsel::zellatmung
+Was passiert bei der alkoholischen Gärung?	Pyruvat → <i>Ethanol + CO₂</i>. Nur 2 ATP. Bei Hefen.	bio::stoffwechsel::zellatmung
+Was ist der Hauptunterschied zwischen Fotosynthese und Zellatmung?	Fotosynthese <i>speichert</i> Energie (CO₂ → Glucose). Zellatmung <i>setzt</i> Energie frei (Glucose → CO₂). Gegenläufig.	bio::stoffwechsel::zellatmung

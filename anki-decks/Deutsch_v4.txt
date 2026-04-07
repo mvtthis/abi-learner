@@ -1,32 +1,32 @@
 #separator:tab
 #html:true
 #tags column:3
-Was ist eine Metapher?	Bedeutungsübertragung ohne "wie". Z.B. "Meer der Tränen", "Fuß des Berges".	deutsch::stilmittel
-Was ist eine Personifikation?	Einem Gegenstand werden *menschliche Eigenschaften* gegeben. Z.B. "Die Sonne lacht".	deutsch::stilmittel
-Was ist eine Anapher?	Wiederholung am *Satzanfang*. Z.B. "Wer nie sein Brot… wer nie die…"	deutsch::stilmittel
-Was ist ein Enjambement?	Der Satz geht über das *Versende* hinaus weiter (Zeilensprung).	deutsch::stilmittel
-Was ist eine Antithese?	Gegenüberstellung von *Gegensätzen*. Z.B. "Der Wahn ist kurz, die Reu ist lang".	deutsch::stilmittel
-Was ist ein Oxymoron?	Zwei sich *widersprechende Begriffe* in einer Wortgruppe. Z.B. "bittersüß", "schwarze Milch".	deutsch::stilmittel
-Was ist ein Symbol?	Konkreter Gegenstand der auf etwas *Abstraktes* verweist. Z.B. Blaue Blume → Sehnsucht (Romantik).	deutsch::stilmittel
-Was ist eine Synästhesie?	Verschmelzung verschiedener *Sinne*. Z.B. "schreiendes Rot" (Sehen + Hören).	deutsch::stilmittel
-Was ist eine Hyperbel?	Starke *Übertreibung*. Z.B. "todmüde", "tausendmal gesagt".	deutsch::stilmittel
-Was ist Ironie?	Aussage meint das *Gegenteil*. Erkennbar durch Kontext.	deutsch::stilmittel
-Leitidee der Aufklärung?	*Vernunft*. "Sapere aude" — habe Mut, dich deines Verstandes zu bedienen (Kant).	deutsch::epochen
-Leitidee Sturm und Drang?	*Gefühl und Genie* gegen reine Vernunft. Natur, Freiheit, Rebellion.	deutsch::epochen
-Leitidee Weimarer Klassik?	*Harmonie* zwischen Gefühl und Vernunft. Antike als Vorbild. Humanitätsideal.	deutsch::epochen
-Leitidee Romantik?	*Sehnsucht, Fantasie, das Unbewusste*. Motive: Blaue Blume, Nacht, Traum, Wandern.	deutsch::epochen
-Leitidee Expressionismus?	*Innerer Ausdruck*, Aufschrei. Themen: Großstadt, Krieg, Zerfall, Ich-Verlust. Stil: Bildbrüche.	deutsch::epochen
-Leitidee Neue Sachlichkeit?	*Nüchterne Beobachtung*. Themen: Alltag Weimarer Republik. Stil: Reportagehaft, knapp, ironisch.	deutsch::epochen
-Worum geht's in "Der zerbrochne Krug"?	Dorfrichter Adam verhandelt einen Fall in dem er *selbst der Täter* ist. Komödie von Kleist.	deutsch::pflichtlektueren::kleist
-Zentrales Thema "Der zerbrochne Krug"?	*Machtmissbrauch* und Korruption der Justiz. Komik durch Selbstentlarvung.	deutsch::pflichtlektueren::kleist
-Worum geht's in "Die Marquise von O..."? (eA)	Marquise wird schwanger ohne zu wissen wer der Vater ist — vergewaltigt von dem Mann der sie *gerettet* hatte.	deutsch::pflichtlektueren::kleist
-Zentrales Thema "Die Marquise von O..."? (eA)	*Retter = Täter*. Ambivalenz. Weibliche Selbstbestimmung. Gedankenstriche als Leerstelle für das Unsagbare.	deutsch::pflichtlektueren::kleist
-Kernidee "Über das Marionettentheater"? (eA)	Durch Bewusstsein verliert der Mensch seine Grazie. Anmut nur bei *null oder unendlichem* Bewusstsein.	deutsch::pflichtlektueren::kleist
+Was ist eine Metapher?	Bedeutungsübertragung ohne "wie".<br><br><b>Z.B.</b> "Meer der Tränen", "Fuß des Berges".	deutsch::stilmittel
+Was ist eine Personifikation?	Einem Gegenstand werden <i>menschliche Eigenschaften</i> gegeben.<br><br><b>Z.B.</b> "Die Sonne lacht".	deutsch::stilmittel
+Was ist eine Anapher?	Wiederholung am <i>Satzanfang</i>.<br><br><b>Z.B.</b> "Wer nie sein Brot… wer nie die…"	deutsch::stilmittel
+Was ist ein Enjambement?	Der Satz geht über das <i>Versende</i> hinaus weiter (Zeilensprung).	deutsch::stilmittel
+Was ist eine Antithese?	Gegenüberstellung von <i>Gegensätzen</i>.<br><br><b>Z.B.</b> "Der Wahn ist kurz, die Reu ist lang".	deutsch::stilmittel
+Was ist ein Oxymoron?	Zwei sich <i>widersprechende Begriffe</i> in einer Wortgruppe.<br><br><b>Z.B.</b> "bittersüß", "schwarze Milch".	deutsch::stilmittel
+Was ist ein Symbol?	Konkreter Gegenstand der auf etwas <i>Abstraktes</i> verweist.<br><br><b>Z.B.</b> Blaue Blume → Sehnsucht (Romantik).	deutsch::stilmittel
+Was ist eine Synästhesie?	Verschmelzung verschiedener <i>Sinne</i>.<br><br><b>Z.B.</b> "schreiendes Rot" (Sehen + Hören).	deutsch::stilmittel
+Was ist eine Hyperbel?	Starke <i>Übertreibung</i>.<br><br><b>Z.B.</b> "todmüde", "tausendmal gesagt".	deutsch::stilmittel
+Was ist Ironie?	Aussage meint das <i>Gegenteil</i>. Erkennbar durch Kontext.	deutsch::stilmittel
+Leitidee der Aufklärung?	<i>Vernunft</i>. "Sapere aude" — habe Mut, dich deines Verstandes zu bedienen (Kant).	deutsch::epochen
+Leitidee Sturm und Drang?	<i>Gefühl und Genie</i> gegen reine Vernunft. Natur, Freiheit, Rebellion.	deutsch::epochen
+Leitidee Weimarer Klassik?	<i>Harmonie</i> zwischen Gefühl und Vernunft. Antike als Vorbild. Humanitätsideal.	deutsch::epochen
+Leitidee Romantik?	<i>Sehnsucht, Fantasie, das Unbewusste</i>. Motive: Blaue Blume, Nacht, Traum, Wandern.	deutsch::epochen
+Leitidee Expressionismus?	<i>Innerer Ausdruck</i>, Aufschrei. Themen: Großstadt, Krieg, Zerfall, Ich-Verlust. Stil: Bildbrüche.	deutsch::epochen
+Leitidee Neue Sachlichkeit?	<i>Nüchterne Beobachtung</i>. Themen: Alltag Weimarer Republik. Stil: Reportagehaft, knapp, ironisch.	deutsch::epochen
+Worum geht's in "Der zerbrochne Krug"?	Dorfrichter Adam verhandelt einen Fall in dem er <i>selbst der Täter</i> ist. Komödie von Kleist.	deutsch::pflichtlektueren::kleist
+Zentrales Thema "Der zerbrochne Krug"?	<i>Machtmissbrauch</i> und Korruption der Justiz. Komik durch Selbstentlarvung.	deutsch::pflichtlektueren::kleist
+Worum geht's in "Die Marquise von O..."? (eA)	Marquise wird schwanger ohne zu wissen wer der Vater ist — vergewaltigt von dem Mann der sie <i>gerettet</i> hatte.	deutsch::pflichtlektueren::kleist
+Zentrales Thema "Die Marquise von O..."? (eA)	<i>Retter = Täter</i>. Ambivalenz. Weibliche Selbstbestimmung. Gedankenstriche als Leerstelle für das Unsagbare.	deutsch::pflichtlektueren::kleist
+Kernidee "Über das Marionettentheater"? (eA)	Durch Bewusstsein verliert der Mensch seine Grazie. Anmut nur bei <i>null oder unendlichem</i> Bewusstsein.	deutsch::pflichtlektueren::kleist
 Worum geht's in "Das kunstseidene Mädchen"?	Doris (18) will "ein Glanz" werden, flieht nach Berlin → Ernüchterung, Einsamkeit. Roman von Keun, 1932.	deutsch::pflichtlektueren::keun
-Was bedeutet "kunstseiden"?	*Unecht* — Imitation von Glanz. Zentrales Motiv: Schein vs. Sein.	deutsch::pflichtlektueren::keun
+Was bedeutet "kunstseiden"?	<i>Unecht</i> — Imitation von Glanz. Zentrales Motiv: Schein vs. Sein.	deutsch::pflichtlektueren::keun
 Worum geht's in "…liner Roma…"? (eA)	Fragmentarischer Roman von Ringelnatz (1924). Groteske Szenen aus Berlin. Titel = abgerissenes Plakat.	deutsch::pflichtlektueren::ringelnatz
-Aufbau Gedichtinterpretation?	1. Einleitung → 2. Formanalyse → 3. Inhalt + Stilmittel (strophenweise) → 4. Epochenzuordnung → 5. Schluss	deutsch::methodik
-Was ist ein Paarreim?	Reimschema *aabb*. Verse reimen sich paarweise.	deutsch::methodik
-Was ist ein Kreuzreim?	Reimschema *abab*. Verse reimen sich über Kreuz.	deutsch::methodik
+Aufbau Gedichtinterpretation?	1. Einleitung<br>2. Formanalyse<br>3. Inhalt + Stilmittel (strophenweise)<br>4. Epochenzuordnung<br>5. Schluss	deutsch::methodik
+Was ist ein Paarreim?	Reimschema <i>aabb</i>. Verse reimen sich paarweise.	deutsch::methodik
+Was ist ein Kreuzreim?	Reimschema <i>abab</i>. Verse reimen sich über Kreuz.	deutsch::methodik
 Was ist ein Jambus?	Metrum: ◡– (unbetont-betont). Aufsteigend, fließend. Häufigstes deutsches Metrum.	deutsch::methodik
 Was ist ein Trochäus?	Metrum: –◡ (betont-unbetont). Absteigend, bestimmt, feierlich.	deutsch::methodik

@@ -11,6 +11,7 @@ export interface ReviewSession {
   totalCards: number
   reviewedCount: number
   correctCount: number
+  seenIds: Set<string>
 }
 
 export function useReviewSession(filterTags?: string[]) {
@@ -22,6 +23,7 @@ export function useReviewSession(filterTags?: string[]) {
     totalCards: 0,
     reviewedCount: 0,
     correctCount: 0,
+    seenIds: new Set(),
   })
   const [loading, setLoading] = useState(true)
   const { reviewCard } = useSpacedRepetition()
@@ -73,6 +75,7 @@ export function useReviewSession(filterTags?: string[]) {
       totalCards: sorted.length,
       reviewedCount: 0,
       correctCount: 0,
+      seenIds: new Set(),
     })
     setLoading(false)
   }, [filterTags])
@@ -94,10 +97,13 @@ export function useReviewSession(filterTags?: string[]) {
       const newQueue = [...prev.queue]
       const reviewedCount = prev.reviewedCount + 1
       const correctCount = prev.correctCount + (correct ? 1 : 0)
+      const newSeenIds = new Set(prev.seenIds)
+      if (prev.currentCard) newSeenIds.add(prev.currentCard.id)
 
-      // If wrong, reinsert card further in queue
+      // If wrong, reinsert after all unseen cards
       if (!correct && prev.currentCard) {
-        const insertAt = Math.min(REAPPEAR_GAP, newQueue.length)
+        const firstSeenIndex = newQueue.findIndex((c) => newSeenIds.has(c.id))
+        const insertAt = firstSeenIndex === -1 ? newQueue.length : firstSeenIndex
         newQueue.splice(insertAt, 0, prev.currentCard)
       }
 
@@ -111,6 +117,7 @@ export function useReviewSession(filterTags?: string[]) {
         totalCards: prev.totalCards,
         reviewedCount,
         correctCount,
+        seenIds: newSeenIds,
       }
     })
   }

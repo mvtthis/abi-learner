@@ -2,34 +2,34 @@
 #html:true
 #tags column:3
 Was bedeutet semikonservativ?	Jedes Tochtermolekül besteht aus 1 altem + 1 neuem Strang.	bio::genetik::replikation
-Womit wurde semikonservative Replikation bewiesen?	Mit dem *Meselson-Stahl-Experiment* — schwerer (¹⁵N) und leichter (¹⁴N) Stickstoff + Dichtegradientenzentrifugation.	bio::genetik::replikation
+Womit wurde semikonservative Replikation bewiesen?	Mit dem <i>Meselson-Stahl-Experiment</i> — schwerer (¹⁵N) und leichter (¹⁴N) Stickstoff + Dichtegradientenzentrifugation.	bio::genetik::replikation
 Was macht die Helicase?	Entwindet die Doppelhelix und trennt die H-Brücken.	bio::genetik::replikation
-Was macht die DNA-Polymerase III?	Baut den neuen Strang auf, arbeitet nur in *5'→3'-Richtung*.	bio::genetik::replikation
+Was macht die DNA-Polymerase III?	Baut den neuen Strang auf, arbeitet nur in <i>5'→3'-Richtung</i>.	bio::genetik::replikation
 Warum braucht die DNA-Pol III einen Primer?	Sie kann nur an ein bestehendes 3'-OH-Ende anbauen — der RNA-Primer (von der Primase) liefert diesen Startpunkt.	bio::genetik::replikation
-Was sind Okazaki-Fragmente?	Kurze DNA-Stücke die am *Folgestrang* entstehen, weil die DNA-Pol nur 5'→3' arbeiten kann.	bio::genetik::replikation
+Was sind Okazaki-Fragmente?	Kurze DNA-Stücke die am <i>Folgestrang</i> entstehen, weil die DNA-Pol nur 5'→3' arbeiten kann.	bio::genetik::replikation
 Was macht die Ligase?	Verknüpft die Okazaki-Fragmente zu einem durchgehenden Strang.	bio::genetik::replikation
-Welcher Strang wird bei der Transkription abgelesen?	Der *codogene Strang* (Matrizenstrang), in 3'→5'-Richtung.	bio::genetik::proteinbiosynthese
-Was ist der codierende Strang?	Der Strang mit der gleichen Sequenz wie die mRNA (nur T statt U). Wird *nicht* abgelesen.	bio::genetik::proteinbiosynthese
-Wo bindet die RNA-Polymerase?	Am *Promotor* (z.B. TATA-Box).	bio::genetik::proteinbiosynthese
-Was ist Spleißen?	*Introns* (nicht-codierend) werden herausgeschnitten, *Exons* (codierend) werden zusammengefügt.	bio::genetik::proteinbiosynthese
-Was ist alternatives Spleißen?	Verschiedene Exon-Kombinationen → aus einem Gen können *mehrere verschiedene Proteine* entstehen.	bio::genetik::proteinbiosynthese
-Was ist das Startcodon?	*AUG* — codiert für Methionin und startet die Translation.	bio::genetik::proteinbiosynthese
-Was sind die Stoppcodons?	*UAA, UAG, UGA* — hier endet die Translation.	bio::genetik::proteinbiosynthese
+Welcher Strang wird bei der Transkription abgelesen?	Der <i>codogene Strang</i> (Matrizenstrang), in 3'→5'-Richtung.	bio::genetik::proteinbiosynthese
+Was ist der codierende Strang?	Der Strang mit der gleichen Sequenz wie die mRNA (nur T statt U). Wird <i>nicht</i> abgelesen.	bio::genetik::proteinbiosynthese
+Wo bindet die RNA-Polymerase?	Am <i>Promotor</i> (z.B. TATA-Box).	bio::genetik::proteinbiosynthese
+Was ist Spleißen?	<i>Introns</i> (nicht-codierend) werden herausgeschnitten, <i>Exons</i> (codierend) werden zusammengefügt.	bio::genetik::proteinbiosynthese
+Was ist alternatives Spleißen?	Verschiedene Exon-Kombinationen → aus einem Gen können <i>mehrere verschiedene Proteine</i> entstehen.	bio::genetik::proteinbiosynthese
+Was ist das Startcodon?	<i>AUG</i> — codiert für Methionin und startet die Translation.	bio::genetik::proteinbiosynthese
+Was sind die Stoppcodons?	<i>UAA, UAG, UGA</i> — hier endet die Translation.	bio::genetik::proteinbiosynthese
 Warum ist der genetische Code degeneriert?	Es gibt 64 Codons aber nur 20 Aminosäuren → mehrere Codons codieren für die gleiche AS.	bio::genetik::proteinbiosynthese
-Wo findet die Translation statt?	An den *Ribosomen* (im Cytoplasma oder am rauen ER).	bio::genetik::proteinbiosynthese
-Was passiert am Operator des lac-Operons ohne Lactose?	Der Repressor sitzt auf dem Operator → RNA-Polymerase wird blockiert → Gene *aus*.	bio::genetik::genregulation
-Was passiert am lac-Operon mit Lactose?	Allolactose bindet an den Repressor → er ändert die Form → fällt vom Operator ab → Gene *an*.	bio::genetik::genregulation
-Was ist der Unterschied zwischen Substratinduktion und Endproduktrepression?	*Substratinduktion* (lac): Substrat schaltet Gene *an*.<br>*Endproduktrepression* (trp): Endprodukt schaltet Gene *aus*.	bio::genetik::genregulation
-Was bedeutet Histon-Acetylierung?	Chromatin wird *locker* (Euchromatin) → Gen ist zugänglich → kann abgelesen werden.	bio::genetik::genregulation
-Was bedeutet DNA-Methylierung?	Gen wird *stillgelegt* — epigenetische Veränderung ohne Sequenzänderung.	bio::genetik::genregulation
-Was sind die 3 Schritte der PCR?	1. *Denaturierung* (95°C): Stränge trennen<br>2. *Annealing* (55–65°C): Primer binden<br>3. *Elongation* (72°C): Taq-Polymerase baut	bio::genetik::gentechnik
-Warum nimmt man Taq-Polymerase bei der PCR?	Sie ist *hitzestabil* (aus Thermus aquaticus) und überlebt die 95°C bei der Denaturierung.	bio::genetik::gentechnik
-Was trennt die Gelelektrophorese?	DNA-Fragmente *nach Größe*. Kleine Fragmente wandern weiter zum Pluspol.	bio::genetik::gentechnik
-Was erzeugen Restriktionsenzyme?	Sie schneiden DNA an Erkennungssequenzen und erzeugen *sticky ends* oder blunt ends.	bio::genetik::gentechnik
-Was macht CRISPR-Cas9?	Guide-RNA führt Cas9 zur Zielstelle → *Doppelstrangbruch*. Dann Reparatur: Gen-Knockout (NHEJ) oder gezielte Änderung (HDR).	bio::genetik::gentechnik
+Wo findet die Translation statt?	An den <i>Ribosomen</i> (im Cytoplasma oder am rauen ER).	bio::genetik::proteinbiosynthese
+Was passiert am Operator des lac-Operons ohne Lactose?	Der Repressor sitzt auf dem Operator → RNA-Polymerase wird blockiert → Gene <i>aus</i>.	bio::genetik::genregulation
+Was passiert am lac-Operon mit Lactose?	Allolactose bindet an den Repressor → er ändert die Form → fällt vom Operator ab → Gene <i>an</i>.	bio::genetik::genregulation
+Was ist der Unterschied zwischen Substratinduktion und Endproduktrepression?	<b>Substratinduktion</b> (lac): Substrat schaltet Gene <i>an</i>.<br><b>Endproduktrepression</b> (trp): Endprodukt schaltet Gene <i>aus</i>.	bio::genetik::genregulation
+Was bedeutet Histon-Acetylierung?	Chromatin wird <i>locker</i> (Euchromatin) → Gen ist zugänglich → kann abgelesen werden.	bio::genetik::genregulation
+Was bedeutet DNA-Methylierung?	Gen wird <i>stillgelegt</i> — epigenetische Veränderung ohne Sequenzänderung.	bio::genetik::genregulation
+Was sind die 3 Schritte der PCR?	1. <i>Denaturierung</i> (95°C): Stränge trennen<br>2. <i>Annealing</i> (55–65°C): Primer binden<br>3. <i>Elongation</i> (72°C): Taq-Polymerase baut	bio::genetik::gentechnik
+Warum nimmt man Taq-Polymerase bei der PCR?	Sie ist <i>hitzestabil</i> (aus Thermus aquaticus) und überlebt die 95°C bei der Denaturierung.	bio::genetik::gentechnik
+Was trennt die Gelelektrophorese?	DNA-Fragmente <i>nach Größe</i>. Kleine Fragmente wandern weiter zum Pluspol.	bio::genetik::gentechnik
+Was erzeugen Restriktionsenzyme?	Sie schneiden DNA an Erkennungssequenzen und erzeugen <i>sticky ends</i> oder blunt ends.	bio::genetik::gentechnik
+Was macht CRISPR-Cas9?	Guide-RNA führt Cas9 zur Zielstelle → <i>Doppelstrangbruch</i>. Dann Reparatur: Gen-Knockout (NHEJ) oder gezielte Änderung (HDR).	bio::genetik::gentechnik
 Was ist eine Rasterschubmutation?	Insertion oder Deletion einer Base → gesamtes Leseraster verschiebt sich → meist funktionsloses Protein.	bio::genetik::mutation
-Was ist eine Missense-Mutation?	Basenaustausch → *andere Aminosäure* wird eingebaut. Kann harmlos oder schädlich sein.	bio::genetik::mutation
-Was ist eine Nonsense-Mutation?	Basenaustausch → es entsteht ein *Stoppcodon* → verkürztes Protein.	bio::genetik::mutation
+Was ist eine Missense-Mutation?	Basenaustausch → <i>andere Aminosäure</i> wird eingebaut. Kann harmlos oder schädlich sein.	bio::genetik::mutation
+Was ist eine Nonsense-Mutation?	Basenaustausch → es entsteht ein <i>Stoppcodon</i> → verkürztes Protein.	bio::genetik::mutation
 Wie erkennst du autosomal-rezessiv im Stammbaum?	Kann Generationen überspringen. Gesunde Eltern → krankes Kind möglich (Aa × Aa → 25% aa).	bio::genetik::mutation
 Wie erkennst du X-chromosomal-rezessiv?	Vor allem Männer betroffen. Keine Vater-Sohn-Vererbung. Frauen sind Konduktorinnen.	bio::genetik::mutation
-Was passiert bei der Meiose anders als bei der Mitose?	*2* Teilungen → *4 haploide* verschiedene Zellen. Crossing-over in Meiose I sorgt für Rekombination.	bio::genetik::mutation
+Was passiert bei der Meiose anders als bei der Mitose?	<i>2</i> Teilungen → <i>4 haploide</i> verschiedene Zellen. Crossing-over in Meiose I sorgt für Rekombination.	bio::genetik::mutation

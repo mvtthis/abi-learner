@@ -1,26 +1,26 @@
 #separator:tab
 #html:true
 #tags column:3
-Welche konditionellen Fähigkeiten gibt es?	*Kraft, Ausdauer, Schnelligkeit.* Energetisch bestimmt.	sport::trainingslehre::grundlagen
+Welche konditionellen Fähigkeiten gibt es?	<b>Kraft</b>, <b>Ausdauer</b>, <b>Schnelligkeit</b>. Energetisch bestimmt.	sport::trainingslehre::grundlagen
 Was ist Maximalkraft?	Die höchstmögliche Kraft bei willkürlicher Muskelkontraktion. Basis aller Kraftarten.	sport::trainingslehre::kraft
-Was ist Schnellkraft?	Fähigkeit, in kürzester Zeit maximale Kraft zu entwickeln. Z.B. Sprint, Wurf, Sprung.	sport::trainingslehre::kraft
+Was ist Schnellkraft?	Fähigkeit, in kürzester Zeit maximale Kraft zu entwickeln.<br><br><b>Z.B.</b> Sprint, Wurf, Sprung.	sport::trainingslehre::kraft
 Was ist Kraftausdauer?	Fähigkeit, eine Kraftleistung über längere Zeit aufrechtzuerhalten.	sport::trainingslehre::kraft
-Was ist konzentrische Kontraktion?	Muskel verkürzt sich unter Spannung (überwindend). Z.B. Bizepscurl hoch.	sport::trainingslehre::kraft
-Was ist exzentrische Kontraktion?	Muskel wird unter Spannung gedehnt (nachgebend). Z.B. kontrolliertes Ablassen. Höhere Kraft möglich als konzentrisch.	sport::trainingslehre::kraft
-Was ist isometrische Kontraktion?	Spannung ohne Längenveränderung (haltend). Z.B. Plank.	sport::trainingslehre::kraft
-Was ist Superkompensation?	Nach Belastung + Erholung liegt die Leistung *über* dem Ausgangsniveau. Trainierst du im richtigen Zeitfenster → Fortschritt.	sport::trainingslehre::grundlagen
-Was passiert bei zu frühem Training (vor Superkompensation)?	*Übertraining* — Leistung sinkt statt zu steigen.	sport::trainingslehre::grundlagen
-Was ist der anaerob-alaktazide Weg?	ATP aus *Kreatinphosphat*. Sofort verfügbar, höchste Leistung, reicht für 6–10 Sekunden. Kein Laktat.	sport::trainingslehre::energiebereitstellung
-Was ist der anaerob-laktazide Weg?	Glykolyse ohne O₂. Reicht für 10 Sek–2 Min. *Laktat* entsteht.	sport::trainingslehre::energiebereitstellung
-Was ist der aerobe Weg?	Fett- und Glykogenverbrennung *mit O₂*. Ab ca. 2 Min dominant. Mittlere Leistung, dafür lange verfügbar.	sport::trainingslehre::energiebereitstellung
+Was ist konzentrische Kontraktion?	Muskel verkürzt sich unter Spannung (überwindend).<br><br><b>Z.B.</b> Bizepscurl hoch.	sport::trainingslehre::kraft
+Was ist exzentrische Kontraktion?	Muskel wird unter Spannung gedehnt (nachgebend).<br><br><b>Z.B.</b> kontrolliertes Ablassen. Höhere Kraft möglich als konzentrisch.	sport::trainingslehre::kraft
+Was ist isometrische Kontraktion?	Spannung ohne Längenveränderung (haltend).<br><br><b>Z.B.</b> Plank.	sport::trainingslehre::kraft
+Was ist Superkompensation?	Nach Belastung + Erholung liegt die Leistung <i>über</i> dem Ausgangsniveau. Trainierst du im richtigen Zeitfenster → Fortschritt.	sport::trainingslehre::grundlagen
+Was passiert bei zu frühem Training (vor Superkompensation)?	<i>Übertraining</i> — Leistung sinkt statt zu steigen.	sport::trainingslehre::grundlagen
+Was ist der anaerob-alaktazide Weg?	ATP aus <i>Kreatinphosphat</i>. Sofort verfügbar, höchste Leistung, reicht für 6–10 Sekunden. Kein Laktat.	sport::trainingslehre::energiebereitstellung
+Was ist der anaerob-laktazide Weg?	Glykolyse ohne O₂. Reicht für 10 Sek–2 Min. <i>Laktat</i> entsteht.	sport::trainingslehre::energiebereitstellung
+Was ist der aerobe Weg?	Fett- und Glykogenverbrennung <i>mit O₂</i>. Ab ca. 2 Min dominant. Mittlere Leistung, dafür lange verfügbar.	sport::trainingslehre::energiebereitstellung
 Was ist die anaerobe Schwelle?	Bei ca. 4 mmol/l Laktat. Maximale Intensität bei der Laktatproduktion gerade noch ausgeglichen wird.	sport::trainingslehre::energiebereitstellung
 Was ist das Prinzip der Anfangskraft?	Einer Bewegung geht eine Gegenbewegung voraus → Vordehnung des Muskels → mehr Kraft.	sport::bewegungslehre::biomechanik
 Was ist das Prinzip der Teilimpulse?	Körperteile werden zeitlich nacheinander beschleunigt: Beine → Rumpf → Arm → Hand.	sport::bewegungslehre::biomechanik
 Was sind die 3 Phasen einer Bewegung?	Vorbereitungsphase (Anlauf/Ausholen) → Hauptphase (eigentliche Aufgabe) → Endphase (Landung/Ausschwung).	sport::bewegungslehre::phasenmodell
 Was ist Grobkoordination?	Erste Phase des Lernens: Viele Fehler, steif, hohe Konzentration nötig.	sport::bewegungslehre::lernen
 Was ist Feinkoordination?	Zweite Phase: Bewegung wird präziser und ökonomischer. Unter guten Bedingungen erfolgreich.	sport::bewegungslehre::lernen
-Was ist variable Verfügbarkeit?	Dritte Phase: Bewegung ist *automatisiert*. Gelingt auch unter Druck und Müdigkeit.	sport::bewegungslehre::lernen
-Was ist mentales Training?	Planmäßiges *Vorstellen* einer Bewegung ohne sie auszuführen. Verbessert die Bewegungsvorstellung.	sport::psychologie::mentales_training
-Was ist intrinsische Motivation?	Motivation *aus der Sache selbst* — Freude an der Bewegung, Interesse. Nachhaltiger als extrinsische.	sport::psychologie::motivation
+Was ist variable Verfügbarkeit?	Dritte Phase: Bewegung ist <i>automatisiert</i>. Gelingt auch unter Druck und Müdigkeit.	sport::bewegungslehre::lernen
+Was ist mentales Training?	Planmäßiges <i>Vorstellen</i> einer Bewegung ohne sie auszuführen. Verbessert die Bewegungsvorstellung.	sport::psychologie::mentales_training
+Was ist intrinsische Motivation?	Motivation <i>aus der Sache selbst</i> — Freude an der Bewegung, Interesse. Nachhaltiger als extrinsische.	sport::psychologie::motivation
 Was ist Doping?	Verstoß gegen Anti-Doping-Regeln. Substanzen (Steroide, EPO) oder Methoden (Blutdoping, Gendoping).	sport::gesundheit::doping
-Was ist das Sportlerherz?	Durch Ausdauertraining: Größeres Herzvolumen, höheres Schlagvolumen → *niedrigerer Ruhepuls* (40–60 statt 60–80).	sport::gesundheit::sportmedizin
+Was ist das Sportlerherz?	Durch Ausdauertraining: Größeres Herzvolumen, höheres Schlagvolumen → <i>niedrigerer Ruhepuls</i> (40–60 statt 60–80).	sport::gesundheit::sportmedizin
