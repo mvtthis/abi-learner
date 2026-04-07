@@ -194,15 +194,13 @@ export function Explore() {
               <h3 className="text-sm font-semibold text-zinc-400">
                 {SUBJECT_LABELS[subject] ?? subject}
               </h3>
-              {subjectImported && (
-                <button
-                  onClick={() => handleReimportSubject(subject)}
-                  disabled={isReimporting || importingAll}
-                  className="text-[10px] text-zinc-600 hover:text-zinc-400 disabled:opacity-50"
-                >
-                  {isReimporting ? 'Importiere...' : 'Neu importieren'}
-                </button>
-              )}
+              <button
+                onClick={() => handleReimportSubject(subject)}
+                disabled={isReimporting || importingAll}
+                className="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-300 disabled:opacity-50 transition-colors"
+              >
+                {isReimporting ? 'Importiere...' : 'Neu importieren'}
+              </button>
             </div>
             <div className="grid grid-cols-1 gap-2">
               {subjectDecks.map((deck) => (
