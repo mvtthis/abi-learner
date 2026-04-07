@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { db, type Card, INACTIVE_NEXT_REVIEW, getActivatedTopics } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
-import { sortForSession, REAPPEAR_GAP } from '@/lib/leitner'
+import { sortForSession, shuffle, REAPPEAR_GAP } from '@/lib/leitner'
 
 export interface ReviewSession {
   queue: Card[]
@@ -49,19 +49,21 @@ export function useReviewSession(filterTags?: string[]) {
       .filter((c) => !c.deleted && c.repetitions === 0 && isInActivatedTopic(c))
       .toArray()
 
-    let allDueCards = [...reviewCards, ...newCards]
+    let filteredNew = [...newCards]
+    let filteredReview = [...reviewCards]
 
     // Apply tag filter
     if (filterTags && filterTags.length > 0) {
-      allDueCards = allDueCards.filter((card) =>
+      const matchesFilter = (card: Card) =>
         filterTags.some((ft) =>
           card.tags.some((t) => t.toLowerCase().startsWith(ft.toLowerCase()))
         )
-      )
+      filteredNew = filteredNew.filter(matchesFilter)
+      filteredReview = filteredReview.filter(matchesFilter)
     }
 
-    // Sort: lowest level first, shuffle within levels
-    const sorted = sortForSession(allDueCards)
+    // New cards first (shuffled), then review cards (sorted by level)
+    const sorted = [...shuffle(filteredNew), ...sortForSession(filteredReview)]
 
     setSession({
       queue: sorted.slice(1),
