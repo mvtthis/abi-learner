@@ -126,14 +126,12 @@ export function useReviewSession(filterTags?: string[]) {
 
     await reviewCard(session.currentCard.id, correct)
 
-    // Calculate progress after if this might complete the session
-    const willComplete = session.queue.length === 0 && correct
-    const noUnseenLeft = session.queue.length === 0 ||
-      (!correct && session.queue.every((c) => session.seenIds.has(c.id)))
+    const reviewedCount = session.reviewedCount + 1
+    const isLastAnswer = reviewedCount >= session.totalCards
 
+    // Calculate progress after if session is ending
     let progressAfter: { overall: number; fach: Map<string, number> } | null = null
-    if (willComplete || noUnseenLeft) {
-      // Small delay to let DB update propagate, then read fresh scores
+    if (isLastAnswer || (session.queue.length === 0 && correct)) {
       const freshCards = await db.cards.filter((c) => !c.deleted).toArray()
       const freshScores = calculateAllScores(freshCards)
       progressAfter = {
@@ -144,10 +142,25 @@ export function useReviewSession(filterTags?: string[]) {
 
     setSession((prev) => {
       const newQueue = [...prev.queue]
-      const reviewedCount = prev.reviewedCount + 1
+      const counted = prev.reviewedCount + 1
       const correctCount = prev.correctCount + (correct ? 1 : 0)
       const newSeenIds = new Set(prev.seenIds)
       if (prev.currentCard) newSeenIds.add(prev.currentCard.id)
+
+      // Session ends after SESSION_SIZE answers — don't reinsert wrong cards
+      if (counted >= prev.totalCards) {
+        return {
+          ...prev,
+          queue: [],
+          currentCard: null,
+          isFlipped: false,
+          isComplete: true,
+          reviewedCount: counted,
+          correctCount,
+          seenIds: newSeenIds,
+          progressAfter,
+        }
+      }
 
       // If wrong, reinsert after all unseen cards
       if (!correct && prev.currentCard) {
@@ -164,7 +177,7 @@ export function useReviewSession(filterTags?: string[]) {
         currentCard: nextCard,
         isFlipped: false,
         isComplete: nextCard === null,
-        reviewedCount,
+        reviewedCount: counted,
         correctCount,
         seenIds: newSeenIds,
         progressAfter: nextCard === null ? progressAfter : prev.progressAfter,
