@@ -78,14 +78,6 @@ export function Review() {
 
               return (
                 <>
-                  {overallDelta !== 0 && (
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-zinc-500 text-xs">Gesamt</span>
-                      <span className={`text-sm font-bold ${overallDelta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {overallDelta > 0 ? '+' : ''}{overallDelta}%
-                      </span>
-                    </div>
-                  )}
                   {fachDeltas.map((fd) => (
                     <div key={fd.fach} className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2">
                       <span className="text-xs text-zinc-400">{getFachLabel(fd.fach)}</span>
@@ -98,7 +90,7 @@ export function Review() {
                         </div>
                         <span className="text-xs text-zinc-500">{fd.after}%</span>
                         <span className={`text-xs font-medium ${fd.delta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                          {fd.delta > 0 ? '+' : ''}{fd.delta}
+                          {fd.delta > 0 ? '+' : ''}{fd.delta}%
                         </span>
                       </div>
                     </div>
