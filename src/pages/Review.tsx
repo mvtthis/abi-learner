@@ -4,6 +4,7 @@ import { useAllTags } from '@/hooks/useCards'
 import { ReviewCard } from '@/components/ReviewCard'
 import { ReviewButtons } from '@/components/ReviewButtons'
 import { TagTree } from '@/components/TagTree'
+import { getFachLabel } from '@/lib/scoreCalculator'
 
 export function Review() {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -59,6 +60,54 @@ export function Review() {
             <p className="text-[10px] text-zinc-500">Nochmal</p>
           </div>
         </div>
+
+        {/* Progress delta */}
+        {session.progressAfter && (
+          <div className="w-full max-w-xs mb-4 space-y-2">
+            {(() => {
+              const overallDelta = session.progressAfter.overall - session.progressBefore.overall
+              const fachDeltas: { fach: string; before: number; after: number; delta: number }[] = []
+
+              for (const [fach, after] of session.progressAfter.fach) {
+                const before = session.progressBefore.fach.get(fach) ?? 0
+                const delta = after - before
+                if (delta !== 0) {
+                  fachDeltas.push({ fach, before, after, delta })
+                }
+              }
+
+              return (
+                <>
+                  {overallDelta !== 0 && (
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-zinc-500 text-xs">Gesamt</span>
+                      <span className={`text-sm font-bold ${overallDelta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {overallDelta > 0 ? '+' : ''}{overallDelta}%
+                      </span>
+                    </div>
+                  )}
+                  {fachDeltas.map((fd) => (
+                    <div key={fd.fach} className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2">
+                      <span className="text-xs text-zinc-400">{getFachLabel(fd.fach)}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-500 rounded-full transition-all"
+                            style={{ width: `${fd.after}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-zinc-500">{fd.after}%</span>
+                        <span className={`text-xs font-medium ${fd.delta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {fd.delta > 0 ? '+' : ''}{fd.delta}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )
+            })()}
+          </div>
+        )}
 
         {/* Progress message */}
         {accuracy >= 80 ? (

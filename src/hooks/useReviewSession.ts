@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { db, type Card, INACTIVE_NEXT_REVIEW, getActivatedTopics } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
 import { sortForSession, shuffle } from '@/lib/leitner'
+import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
 
 const SESSION_SIZE = 20
 
@@ -18,6 +19,10 @@ export interface ReviewSession {
   totalAvailable: number
   /** How many sessions are left after this one */
   sessionsLeft: number
+  /** Progress snapshot before session started */
+  progressBefore: { overall: number; fach: Map<string, number> }
+  /** Progress after session (calculated on completion) */
+  progressAfter: { overall: number; fach: Map<string, number> } | null
 }
 
 /** Shared helper to get all due cards */
@@ -65,12 +70,20 @@ export function useReviewSession(filterTags?: string[]) {
     seenIds: new Set(),
     totalAvailable: 0,
     sessionsLeft: 0,
+    progressBefore: { overall: 0, fach: new Map() },
+    progressAfter: null,
   })
   const [loading, setLoading] = useState(true)
   const { reviewCard } = useSpacedRepetition()
 
   const loadSession = useCallback(async () => {
     setLoading(true)
+
+    // Snapshot current progress before session
+    const allCards = await db.cards.filter((c) => !c.deleted).toArray()
+    const scores = calculateAllScores(allCards)
+    const fachBefore = new Map(scores.fachScores.map((f) => [f.fach, f.score]))
+    const progressBefore = { overall: scores.overall, fach: fachBefore }
 
     const { newCards, reviewCards } = await getDueCards(filterTags)
 
@@ -94,6 +107,8 @@ export function useReviewSession(filterTags?: string[]) {
       seenIds: new Set(),
       totalAvailable,
       sessionsLeft,
+      progressBefore,
+      progressAfter: null,
     })
     setLoading(false)
   }, [filterTags])
@@ -110,6 +125,22 @@ export function useReviewSession(filterTags?: string[]) {
     if (!session.currentCard) return
 
     await reviewCard(session.currentCard.id, correct)
+
+    // Calculate progress after if this might complete the session
+    const willComplete = session.queue.length === 0 && correct
+    const noUnseenLeft = session.queue.length === 0 ||
+      (!correct && session.queue.every((c) => session.seenIds.has(c.id)))
+
+    let progressAfter: { overall: number; fach: Map<string, number> } | null = null
+    if (willComplete || noUnseenLeft) {
+      // Small delay to let DB update propagate, then read fresh scores
+      const freshCards = await db.cards.filter((c) => !c.deleted).toArray()
+      const freshScores = calculateAllScores(freshCards)
+      progressAfter = {
+        overall: freshScores.overall,
+        fach: new Map(freshScores.fachScores.map((f) => [f.fach, f.score])),
+      }
+    }
 
     setSession((prev) => {
       const newQueue = [...prev.queue]
@@ -136,6 +167,7 @@ export function useReviewSession(filterTags?: string[]) {
         reviewedCount,
         correctCount,
         seenIds: newSeenIds,
+        progressAfter: nextCard === null ? progressAfter : prev.progressAfter,
       }
     })
   }
