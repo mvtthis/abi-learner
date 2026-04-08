@@ -1,12 +1,34 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useReviewSession } from '@/hooks/useReviewSession'
 import { useAllTags } from '@/hooks/useCards'
+import { useAuth } from '@/hooks/useAuth'
 import { ReviewCard } from '@/components/ReviewCard'
 import { ReviewButtons } from '@/components/ReviewButtons'
 import { TagTree } from '@/components/TagTree'
 import { getFachLabel } from '@/lib/scoreCalculator'
 
 export function Review() {
+  const { user, isConfigured } = useAuth()
+  const navigate = useNavigate()
+
+  if (isConfigured && !user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+        <span className="text-4xl mb-4">🔒</span>
+        <h2 className="text-lg font-bold text-white mb-2">Nicht eingeloggt</h2>
+        <p className="text-zinc-400 text-sm mb-6">
+          Logge dich ein, damit dein Lernfortschritt gespeichert wird.
+        </p>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-6 py-2.5 bg-blue-600 rounded-xl text-sm text-white font-medium hover:bg-blue-500"
+        >
+          Zum Login
+        </button>
+      </div>
+    )
+  }
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [showFilter, setShowFilter] = useState(false)
   const tags = useAllTags()
