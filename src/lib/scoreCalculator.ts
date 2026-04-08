@@ -37,19 +37,19 @@ export function getFachLabel(fach: string): string {
 
 /**
  * Card mastery based on Leitner level (stored in repetitions field).
- * Level 0 = 0%, Level 1 = 25%, Level 2 = 50%, Level 3 = 75%, Level 4+ = 100%
+ * Level 0 = 0%, Level 1 = 33%, Level 2 = 66%, Level 3+ = 100%
+ * 100% = 3x hintereinander richtig beantwortet.
  */
 export function getCardMastery(card: Card): number {
   const level = card.repetitions
   if (level <= 0) return 0
-  if (level === 1) return 25
-  if (level === 2) return 50
-  if (level === 3) return 75
-  return 100 // level 4+
+  if (level === 1) return 33
+  if (level === 2) return 66
+  return 100 // level 3+
 }
 
 export function isCardMastered(card: Card): boolean {
-  return card.repetitions >= 4
+  return card.repetitions >= 3
 }
 
 export function calculateFachScore(cards: Card[]): FachScore | null {

@@ -90,29 +90,20 @@ export function Dashboard() {
       {examDates.size > 0 && <ExamCountdown examDates={examDates} />}
       <ExamDateEditor />
 
-      {/* Due Cards CTA */}
+      {/* Session CTA */}
       <button
         onClick={() => navigate('/review')}
         className="w-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
       >
-        {reviewCount > 0 ? (
+        {totalCount > 0 ? (
           <>
-            <p className="text-blue-100 text-sm">Wiederholen</p>
-            <p className="text-4xl font-bold text-white mt-1">
-              {reviewCount} <span className="text-lg font-normal">Karten</span>
+            <p className="text-3xl font-bold text-white">Session starten</p>
+            <p className="text-blue-200 text-sm mt-2">
+              {Math.min(totalCount, 20)} Karten
+              {totalCount > 20 && (
+                <span className="text-blue-300/60"> · {Math.ceil(totalCount / 20)} Sessions insgesamt</span>
+              )}
             </p>
-            {newCount > 0 && (
-              <p className="text-blue-200 text-xs mt-1">+ {newCount} neue Karten</p>
-            )}
-            <p className="text-blue-200 text-sm mt-2">Jetzt lernen →</p>
-          </>
-        ) : newCount > 0 ? (
-          <>
-            <p className="text-blue-100 text-sm">Neue Karten</p>
-            <p className="text-4xl font-bold text-white mt-1">
-              {newCount} <span className="text-lg font-normal">verfügbar</span>
-            </p>
-            <p className="text-blue-200 text-sm mt-2">Jetzt lernen →</p>
           </>
         ) : totalCount === 0 && allCards.length > 0 ? (
           <>

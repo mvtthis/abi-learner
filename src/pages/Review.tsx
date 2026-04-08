@@ -36,22 +36,62 @@ export function Review() {
       ? Math.round((session.correctCount / session.reviewedCount) * 100)
       : 0
 
+    const wrongCount = session.reviewedCount - session.correctCount
+    const emoji = accuracy >= 90 ? '🔥' : accuracy >= 70 ? '💪' : accuracy >= 50 ? '📈' : '🧠'
+
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
-        <span className="text-5xl mb-4">🎉</span>
-        <h2 className="text-xl font-bold text-white mb-2">Geschafft!</h2>
-        <p className="text-zinc-400 text-sm mb-1">
-          {session.reviewedCount} Karten gelernt · {accuracy}% richtig
-        </p>
-        <p className="text-zinc-600 text-xs">
-          Komm später wieder — neue Karten werden fällig.
-        </p>
-        <button
-          onClick={reload}
-          className="mt-6 px-6 py-2.5 bg-zinc-800 rounded-xl text-sm text-white hover:bg-zinc-700"
-        >
-          Nochmal prüfen
-        </button>
+        <span className="text-5xl mb-4">{emoji}</span>
+        <h2 className="text-xl font-bold text-white mb-4">Session geschafft!</h2>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 w-full max-w-xs mb-6">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
+            <p className="text-2xl font-bold text-white">{accuracy}%</p>
+            <p className="text-[10px] text-zinc-500">Richtig</p>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
+            <p className="text-2xl font-bold text-emerald-400">{session.correctCount}</p>
+            <p className="text-[10px] text-zinc-500">Gewusst</p>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
+            <p className="text-2xl font-bold text-red-400">{wrongCount}</p>
+            <p className="text-[10px] text-zinc-500">Nochmal</p>
+          </div>
+        </div>
+
+        {/* Progress message */}
+        {accuracy >= 80 ? (
+          <p className="text-emerald-400 text-sm mb-1">Starke Session!</p>
+        ) : accuracy >= 50 ? (
+          <p className="text-orange-400 text-sm mb-1">Wird besser — dranbleiben!</p>
+        ) : (
+          <p className="text-zinc-400 text-sm mb-1">Übung macht den Meister.</p>
+        )}
+
+        {session.sessionsLeft > 0 && (
+          <p className="text-zinc-600 text-xs mb-6">
+            Noch {session.sessionsLeft} {session.sessionsLeft === 1 ? 'Session' : 'Sessions'} übrig
+          </p>
+        )}
+
+        <div className="flex gap-3 w-full max-w-xs">
+          {session.sessionsLeft > 0 ? (
+            <button
+              onClick={reload}
+              className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm active:bg-blue-500"
+            >
+              Nächste Session
+            </button>
+          ) : (
+            <button
+              onClick={reload}
+              className="flex-1 py-3 rounded-xl bg-zinc-800 text-white text-sm hover:bg-zinc-700"
+            >
+              Nochmal prüfen
+            </button>
+          )}
+        </div>
       </div>
     )
   }
@@ -70,13 +110,10 @@ export function Review() {
             <div
               className="h-full bg-blue-500 rounded-full transition-all"
               style={{
-                width: `${((session.reviewedCount) / session.totalCards) * 100}%`,
+                width: `${(session.reviewedCount / session.totalCards) * 100}%`,
               }}
             />
           </div>
-          <span className="text-[11px] text-zinc-600">
-            noch {remaining}
-          </span>
         </div>
         <button
           onClick={() => setShowFilter(!showFilter)}
