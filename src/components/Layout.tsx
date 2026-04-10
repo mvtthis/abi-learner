@@ -7,8 +7,8 @@ import { useDueCount } from '@/hooks/useReviewSession'
 const navItems = [
   { to: '/', icon: '🏠', label: 'Home' },
   { to: '/review', icon: '📖', label: 'Lernen' },
+  { to: '/weak', icon: '🎯', label: 'Schwächen' },
   { to: '/explore', icon: '📚', label: 'Decks' },
-  { to: '/browse', icon: '🗂️', label: 'Karten' },
 ]
 
 export function Layout() {

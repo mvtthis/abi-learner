@@ -8,6 +8,7 @@ import { Browse } from '@/pages/Browse'
 import { Import } from '@/pages/Import'
 import { Explore } from '@/pages/Explore'
 import { Login } from '@/pages/Login'
+import { WeakTopics } from '@/pages/WeakTopics'
 import { Onboarding } from '@/pages/Onboarding'
 
 function AppRouter() {
@@ -46,6 +47,7 @@ function AppRouter() {
         <Route path="/browse" element={<Browse />} />
         <Route path="/import" element={<Import />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/weak" element={<WeakTopics />} />
         <Route path="/login" element={<Login />} />
       </Route>
       <Route path="/onboarding" element={<Onboarding onComplete={completeOnboarding} />} />
