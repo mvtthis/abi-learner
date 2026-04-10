@@ -38,12 +38,19 @@ async function getDueCards(filterTags?: string[]) {
       return activatedTopics.has(topicKey)
     })
 
-  let reviewCards = await db.cards
-    .filter((c) => !c.deleted && c.repetitions > 0 && c.next_review <= now)
+  // Get all review logs to know which cards have been seen before
+  const reviewedCardIds = new Set(
+    (await db.reviewLogs.toArray()).map((r) => r.card_id)
+  )
+
+  // Truly new = never reviewed at all (no review log entry)
+  let newCards = await db.cards
+    .filter((c) => !c.deleted && !reviewedCardIds.has(c.id) && isInActivatedTopic(c))
     .toArray()
 
-  let newCards = await db.cards
-    .filter((c) => !c.deleted && c.repetitions === 0 && isInActivatedTopic(c))
+  // Reviews = everything that's been seen before and is due
+  let reviewCards = await db.cards
+    .filter((c) => !c.deleted && reviewedCardIds.has(c.id) && c.next_review <= now)
     .toArray()
 
   if (filterTags && filterTags.length > 0) {
