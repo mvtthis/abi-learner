@@ -11,6 +11,12 @@ import { getFachLabel } from '@/lib/scoreCalculator'
 export function Review() {
   const { user, isConfigured } = useAuth()
   const navigate = useNavigate()
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [showFilter, setShowFilter] = useState(false)
+  const tags = useAllTags()
+  const { session, loading, flip, answer, reload } = useReviewSession(
+    selectedTags.length > 0 ? selectedTags : undefined
+  )
 
   if (isConfigured && !user) {
     return (
@@ -29,12 +35,6 @@ export function Review() {
       </div>
     )
   }
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [showFilter, setShowFilter] = useState(false)
-  const tags = useAllTags()
-  const { session, loading, flip, answer, reload } = useReviewSession(
-    selectedTags.length > 0 ? selectedTags : undefined
-  )
 
   const handleToggleTag = (tag: string) => {
     if (tag === '') {
