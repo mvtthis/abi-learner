@@ -13,10 +13,21 @@ export function Review() {
   const navigate = useNavigate()
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [showFilter, setShowFilter] = useState(false)
+  const [canFlip, setCanFlip] = useState(true)
   const tags = useAllTags()
   const { session, loading, flip, answer, reload } = useReviewSession(
     selectedTags.length > 0 ? selectedTags : undefined
   )
+
+  const handleAnswer = async (correct: boolean) => {
+    setCanFlip(false)
+    await answer(correct)
+    setTimeout(() => setCanFlip(true), 400)
+  }
+
+  const handleFlip = () => {
+    if (canFlip) flip()
+  }
 
   if (isConfigured && !user) {
     return (
@@ -203,7 +214,7 @@ export function Review() {
           <ReviewCard
             card={session.currentCard}
             isFlipped={session.isFlipped}
-            onFlip={flip}
+            onFlip={handleFlip}
           />
         )}
       </div>
@@ -211,11 +222,12 @@ export function Review() {
       {/* Buttons — always fixed at bottom */}
       <div className="px-4 pb-4 pt-2 flex-shrink-0">
         {session.isFlipped ? (
-          <ReviewButtons onAnswer={answer} />
+          <ReviewButtons onAnswer={handleAnswer} />
         ) : (
           <button
-            onClick={flip}
-            className="w-full py-4 rounded-xl bg-zinc-800 text-white font-medium text-sm active:bg-zinc-700 transition-colors"
+            onClick={handleFlip}
+            disabled={!canFlip}
+            className="w-full py-4 rounded-xl bg-zinc-800 text-white font-medium text-sm active:bg-zinc-700 transition-colors disabled:opacity-40"
           >
             Antwort zeigen
           </button>
