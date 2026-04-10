@@ -94,19 +94,20 @@ export function useReviewSession(filterTags?: string[]) {
 
     const { newCards, reviewCards } = await getDueCards(filterTags)
 
-    // New cards have priority — only mix in reviews when no new cards left
+    // STRICT: new cards only until ALL are done. Reviews come AFTER.
     let sessionCards: Card[]
+    let totalAvailable: number
     if (newCards.length > 0) {
-      // Only new cards in this session
+      // Only new cards — no reviews mixed in at all
       const shuffled = shuffle(newCards)
       sessionCards = shuffled.slice(0, SESSION_SIZE)
+      totalAvailable = newCards.length
     } else {
-      // All new cards done — now reviews
+      // All new cards done — now reviews only
       const sorted = sortForSession(reviewCards)
       sessionCards = sorted.slice(0, SESSION_SIZE)
+      totalAvailable = reviewCards.length
     }
-
-    const totalAvailable = newCards.length + reviewCards.length
     const remaining = totalAvailable - sessionCards.length
     const sessionsLeft = Math.ceil(remaining / SESSION_SIZE)
 
@@ -188,8 +189,9 @@ export function useDueCount(filterTags?: string[]) {
   useEffect(() => {
     const load = async () => {
       const { newCards, reviewCards } = await getDueCards(filterTags)
-      setReviewCount(reviewCards.length)
+      // If new cards exist, reviews are hidden (not shown until all new done)
       setNewCount(newCards.length)
+      setReviewCount(newCards.length > 0 ? 0 : reviewCards.length)
     }
     load()
     const interval = setInterval(load, 30000)
