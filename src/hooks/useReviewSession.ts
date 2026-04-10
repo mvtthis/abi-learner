@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { db, type Card, INACTIVE_NEXT_REVIEW, getActivatedTopics } from '@/lib/db'
+import { db, type Card, getActivatedTopics } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
 import { sortForSession, shuffle } from '@/lib/leitner'
 import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
@@ -87,12 +87,19 @@ export function useReviewSession(filterTags?: string[]) {
 
     const { newCards, reviewCards } = await getDueCards(filterTags)
 
-    // New cards first, then review cards sorted by level
-    const allSorted = [...shuffle(newCards), ...sortForSession(reviewCards)]
-    const totalAvailable = allSorted.length
+    // New cards have priority — only mix in reviews when no new cards left
+    let sessionCards: Card[]
+    if (newCards.length > 0) {
+      // Only new cards in this session
+      const shuffled = shuffle(newCards)
+      sessionCards = shuffled.slice(0, SESSION_SIZE)
+    } else {
+      // All new cards done — now reviews
+      const sorted = sortForSession(reviewCards)
+      sessionCards = sorted.slice(0, SESSION_SIZE)
+    }
 
-    // Take only SESSION_SIZE cards for this session
-    const sessionCards = allSorted.slice(0, SESSION_SIZE)
+    const totalAvailable = newCards.length + reviewCards.length
     const remaining = totalAvailable - sessionCards.length
     const sessionsLeft = Math.ceil(remaining / SESSION_SIZE)
 
@@ -147,28 +154,7 @@ export function useReviewSession(filterTags?: string[]) {
       const newSeenIds = new Set(prev.seenIds)
       if (prev.currentCard) newSeenIds.add(prev.currentCard.id)
 
-      // Session ends after SESSION_SIZE answers — don't reinsert wrong cards
-      if (counted >= prev.totalCards) {
-        return {
-          ...prev,
-          queue: [],
-          currentCard: null,
-          isFlipped: false,
-          isComplete: true,
-          reviewedCount: counted,
-          correctCount,
-          seenIds: newSeenIds,
-          progressAfter,
-        }
-      }
-
-      // If wrong, reinsert after all unseen cards
-      if (!correct && prev.currentCard) {
-        const firstSeenIndex = newQueue.findIndex((c) => newSeenIds.has(c.id))
-        const insertAt = firstSeenIndex === -1 ? newQueue.length : firstSeenIndex
-        newQueue.splice(insertAt, 0, prev.currentCard)
-      }
-
+      // No reinsertion of wrong cards — they come back next session
       const nextCard = newQueue.shift() ?? null
 
       return {
