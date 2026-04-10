@@ -14,16 +14,17 @@ import { ExamDateEditor } from '@/components/ExamDateEditor'
 
 function ExamCountdown({ examDates }: { examDates: Map<string, ExamDate> }) {
   const now = new Date()
-  now.setHours(0, 0, 0, 0)
 
   const upcoming = Array.from(examDates.values())
     .map((e) => {
       const examDate = new Date(e.date)
-      examDate.setHours(23, 59, 59, 999)
-      const days = Math.ceil((examDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
-      return { ...e, days }
+      // Exam is "done" at 13:00 on exam day
+      examDate.setHours(13, 0, 0, 0)
+      const diffMs = examDate.getTime() - now.getTime()
+      const days = Math.ceil(diffMs / (24 * 60 * 60 * 1000))
+      return { ...e, days, isToday: days === 0 || (days === 1 && diffMs < 24 * 60 * 60 * 1000 && diffMs > 0) }
     })
-    .filter((e) => e.days > 0)
+    .filter((e) => e.days > 0 || (e.days === 0 && new Date().getHours() < 13))
     .sort((a, b) => a.days - b.days)
 
   if (upcoming.length === 0) return null
@@ -44,7 +45,7 @@ function ExamCountdown({ examDates }: { examDates: Map<string, ExamDate> }) {
           {getFachLabel(next.fach)}
         </span>
         <span className="text-white/80 text-sm">
-          in {next.days} {next.days === 1 ? 'Tag' : 'Tagen'}
+          {next.days <= 0 ? 'heute' : next.days === 1 ? 'morgen' : `in ${next.days} Tagen`}
         </span>
       </div>
       {upcoming.length > 1 && (
@@ -73,15 +74,14 @@ export function Dashboard() {
     getExamDates().then(setExamDates)
   }, [])
 
-  // Filter out fachScores for past exams
+  // Filter out fachScores for past exams (done after 13:00 on exam day)
   const now = new Date()
-  now.setHours(0, 0, 0, 0)
   const activeFachScores = fachScores.filter((fs) => {
     const exam = examDates.get(fs.fach)
     if (!exam) return true
     const examDate = new Date(exam.date)
-    examDate.setHours(23, 59, 59, 999)
-    return examDate.getTime() >= now.getTime()
+    examDate.setHours(13, 0, 0, 0)
+    return now.getTime() < examDate.getTime()
   })
 
   return (
