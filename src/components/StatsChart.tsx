@@ -11,43 +11,60 @@ function toLocalDateKey(d: Date): string {
 export function StatsChart({ days }: StatsChartProps) {
   const maxTotal = Math.max(...days.map((d) => d.total), 1)
   const today = toLocalDateKey(new Date())
+  const chartHeight = 100
 
   return (
-    <div className="flex items-end gap-1 h-32 w-full">
-      {days.map((day) => {
-        const heightPct = (day.total / maxTotal) * 100
-        const correctPct = day.total > 0 ? ((day.good + day.easy) / day.total) * 100 : 0
-        const wrongPct = day.total > 0 ? 100 - correctPct : 0
+    <svg viewBox={`0 0 ${days.length * 22} ${chartHeight + 16}`} className="w-full" style={{ maxHeight: '140px' }}>
+      {days.map((day, i) => {
+        const barHeight = day.total > 0
+          ? Math.max((day.total / maxTotal) * chartHeight, 6)
+          : 0
+        const correctRatio = day.total > 0 ? (day.good + day.easy) / day.total : 0
+        const correctHeight = barHeight * correctRatio
+        const wrongHeight = barHeight - correctHeight
+        const x = i * 22 + 2
+        const barWidth = 18
         const isToday = day.date === today
 
         return (
-          <div
-            key={day.date}
-            className="flex-1 flex flex-col items-center gap-1"
-          >
-            <div
-              className="w-full rounded-t-sm overflow-hidden"
-              style={{ height: `${Math.max(heightPct, day.total > 0 ? 10 : 2)}%` }}
-            >
-              {day.total > 0 ? (
-                <div className="w-full h-full flex flex-col">
-                  <div className="w-full bg-emerald-500" style={{ height: `${correctPct}%` }} />
-                  <div className="w-full bg-red-500 flex-1" />
-                </div>
-              ) : (
-                <div className="bg-zinc-800 w-full h-full" />
-              )}
-            </div>
-            <span
-              className={`text-[9px] ${
-                isToday ? 'text-blue-400 font-medium' : 'text-zinc-600'
-              }`}
+          <g key={day.date}>
+            {/* Empty day placeholder */}
+            {day.total === 0 && (
+              <rect
+                x={x} y={chartHeight - 2}
+                width={barWidth} height={2}
+                rx={1} fill="#27272a"
+              />
+            )}
+            {/* Wrong (red) bar */}
+            {wrongHeight > 0 && (
+              <rect
+                x={x} y={chartHeight - barHeight}
+                width={barWidth} height={wrongHeight}
+                rx={2} fill="#ef4444"
+              />
+            )}
+            {/* Correct (green) bar on top of wrong */}
+            {correctHeight > 0 && (
+              <rect
+                x={x} y={chartHeight - barHeight + wrongHeight}
+                width={barWidth} height={correctHeight}
+                rx={2} fill="#22c55e"
+              />
+            )}
+            {/* Day label */}
+            <text
+              x={x + barWidth / 2} y={chartHeight + 12}
+              textAnchor="middle"
+              fill={isToday ? '#3b82f6' : '#52525b'}
+              fontSize="8"
+              fontWeight={isToday ? 'bold' : 'normal'}
             >
               {new Date(day.date + 'T12:00:00').getDate()}
-            </span>
-          </div>
+            </text>
+          </g>
         )
       })}
-    </div>
+    </svg>
   )
 }
