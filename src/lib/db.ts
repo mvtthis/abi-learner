@@ -243,10 +243,22 @@ export async function getSessionSnapshots(): Promise<SessionSnapshot[]> {
   return db.sessionSnapshots.orderBy('sessionNumber').toArray()
 }
 
-/** If snapshots are empty but reviews exist, seed an initial snapshot from current state */
+/** If snapshots are empty or missing topic-level data, reseed from current state */
 export async function seedInitialSnapshot(): Promise<void> {
-  const snapshotCount = await db.sessionSnapshots.count()
-  if (snapshotCount > 0) return
+  const snapshots = await db.sessionSnapshots.toArray()
+
+  // Check if existing snapshots have topic-level keys (contain ::)
+  const hasTopicData = snapshots.some((s) =>
+    Object.keys(s.topicScores).some((k) => k.includes('::'))
+  )
+
+  // If snapshots exist with topic data, nothing to do
+  if (snapshots.length > 0 && hasTopicData) return
+
+  // Clear old fach-only snapshots
+  if (snapshots.length > 0 && !hasTopicData) {
+    await db.sessionSnapshots.clear()
+  }
 
   const reviewCount = await db.reviewLogs.count()
   if (reviewCount === 0) return
