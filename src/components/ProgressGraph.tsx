@@ -66,10 +66,6 @@ export function ProgressGraph() {
       const parts = k.split('::')
       return [k, capitalize(parts[parts.length - 1])]
     }))
-
-    // Also add fach total line
-    lineKeys.unshift(fach)
-    lineLabels.set(fach, `${getFachLabel(fach)} (Gesamt)`)
   }
 
   // Build data points per line, carry forward last value
@@ -166,9 +162,8 @@ export function ProgressGraph() {
         {lineKeys.map((key, lineIdx) => {
           const points = lineData.get(key)!
           const color = TOPIC_COLORS[lineIdx % TOPIC_COLORS.length]
-          const isFachTotal = !key.includes('::') && fach !== '_all'
-          const strokeWidth = isFachTotal ? 2 : 1.5
-          const opacity = isFachTotal ? 1 : 0.8
+          const strokeWidth = 1.5
+          const opacity = 0.9
 
           if (points.length === 1) {
             const x = paddingLeft + plotWidth / 2
@@ -194,7 +189,7 @@ export function ProgressGraph() {
               {points.map((v, i) => {
                 const x = paddingLeft + i * xStep
                 const y = paddingTop + plotHeight - (v / 100) * plotHeight
-                return <circle key={i} cx={x} cy={y} r={isFachTotal ? 2.5 : 2} fill={color} opacity={opacity} />
+                return <circle key={i} cx={x} cy={y} r="2" fill={color} opacity={opacity} />
               })}
             </g>
           )
@@ -208,15 +203,13 @@ export function ProgressGraph() {
           const points = lineData.get(key)!
           const current = points[points.length - 1]
           const label = lineLabels.get(key) ?? key
-          const isFachTotal = !key.includes('::') && fach !== '_all'
-
           return (
             <div key={key} className="flex items-center gap-1.5">
               <div
                 className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ backgroundColor: color }}
               />
-              <span className={`text-[10px] ${isFachTotal ? 'text-zinc-300 font-medium' : 'text-zinc-500'}`}>
+              <span className="text-[10px] text-zinc-500">
                 {label} {current}%
               </span>
             </div>
