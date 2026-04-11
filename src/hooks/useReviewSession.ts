@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { db, type Card, getActivatedTopics } from '@/lib/db'
+import { db, type Card, getActivatedTopics, saveSessionSnapshot } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
 import { sortForSession, shuffle } from '@/lib/leitner'
 import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
@@ -153,6 +153,13 @@ export function useReviewSession(filterTags?: string[]) {
         overall: freshScores.overall,
         fach: new Map(freshScores.fachScores.map((f) => [f.fach, f.score])),
       }
+
+      // Save session snapshot for progress graph
+      const topicScores: Record<string, number> = {}
+      for (const fs of freshScores.fachScores) {
+        topicScores[fs.fach] = fs.score
+      }
+      await saveSessionSnapshot(topicScores)
     }
 
     setSession((prev) => {

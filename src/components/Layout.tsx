@@ -7,7 +7,7 @@ import { useDueCount } from '@/hooks/useReviewSession'
 const navItems = [
   { to: '/', icon: '🏠', label: 'Home' },
   { to: '/review', icon: '📖', label: 'Lernen' },
-  { to: '/weak', icon: '🎯', label: 'Schwächen' },
+  { to: '/progress', icon: '📊', label: 'Fortschritt' },
   { to: '/explore', icon: '📚', label: 'Decks' },
 ]
 

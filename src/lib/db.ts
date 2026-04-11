@@ -47,6 +47,14 @@ export interface ExamDate {
   date: string // ISO date string e.g. "2026-04-10"
 }
 
+export interface SessionSnapshot {
+  id: string // auto-generated
+  timestamp: number
+  sessionNumber: number
+  /** Topic scores at end of session: topic key → percentage */
+  topicScores: Record<string, number>
+}
+
 // Far-future timestamp for inactive cards (year 2100)
 export const INACTIVE_NEXT_REVIEW = new Date('2100-01-01').getTime()
 
@@ -57,6 +65,7 @@ class AbiLearnerDB extends Dexie {
   appSettings!: Table<AppSettings>
   activatedTopics!: Table<ActivatedTopic>
   examDates!: Table<ExamDate>
+  sessionSnapshots!: Table<SessionSnapshot>
 
   constructor() {
     super('abi-learner')
@@ -87,6 +96,15 @@ class AbiLearnerDB extends Dexie {
       appSettings: 'id',
       activatedTopics: 'topic',
       examDates: 'fach',
+    })
+    this.version(4).stores({
+      cards: 'id, next_review, sync_status, *tags, updated_at, deleted',
+      reviewLogs: 'id, card_id, reviewed_at, sync_status',
+      syncMeta: 'id',
+      appSettings: 'id',
+      activatedTopics: 'topic',
+      examDates: 'fach',
+      sessionSnapshots: 'id, timestamp, sessionNumber',
     })
   }
 }
@@ -207,4 +225,20 @@ export async function deactivateTopic(topic: string): Promise<void> {
 export async function isTopicActivated(topic: string): Promise<boolean> {
   const entry = await db.activatedTopics.get(topic)
   return !!entry
+}
+
+export async function saveSessionSnapshot(topicScores: Record<string, number>): Promise<void> {
+  const lastSnapshot = await db.sessionSnapshots.orderBy('sessionNumber').last()
+  const sessionNumber = (lastSnapshot?.sessionNumber ?? 0) + 1
+
+  await db.sessionSnapshots.put({
+    id: `session-${sessionNumber}`,
+    timestamp: Date.now(),
+    sessionNumber,
+    topicScores,
+  })
+}
+
+export async function getSessionSnapshots(): Promise<SessionSnapshot[]> {
+  return db.sessionSnapshots.orderBy('sessionNumber').toArray()
 }
