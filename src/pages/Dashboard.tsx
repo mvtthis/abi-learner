@@ -9,7 +9,7 @@ import { ReadinessScore, OverallScore } from '@/components/ReadinessScore'
 import { TopicBreakdown } from '@/components/TopicBreakdown'
 import { TopicManager } from '@/components/TopicManager'
 import { getFachLabel } from '@/lib/scoreCalculator'
-import { getExamDates, type ExamDate } from '@/lib/db'
+import { getExamDates, type ExamDate, db, INACTIVE_NEXT_REVIEW } from '@/lib/db'
 import { useActivatedTopics } from '@/hooks/useActivatedTopics'
 import { ExamDateEditor } from '@/components/ExamDateEditor'
 
@@ -72,10 +72,37 @@ export function Dashboard() {
   const { activatedTopics } = useActivatedTopics()
   const [expandedFach, setExpandedFach] = useState<string | null>(null)
   const [examDates, setExamDates] = useState<Map<string, ExamDate>>(new Map())
+  const [nextDueIn, setNextDueIn] = useState<string | null>(null)
 
   useEffect(() => {
     getExamDates().then(setExamDates)
   }, [])
+
+  // Find when next card becomes due
+  useEffect(() => {
+    if (totalCount > 0) { setNextDueIn(null); return }
+    const findNext = async () => {
+      const now = Date.now()
+      const futureCards = await db.cards
+        .filter((c) => !c.deleted && c.repetitions > 0 && c.next_review > now && c.next_review < INACTIVE_NEXT_REVIEW)
+        .toArray()
+      if (futureCards.length === 0) { setNextDueIn(null); return }
+      const soonest = Math.min(...futureCards.map((c) => c.next_review))
+      const diffMs = soonest - now
+      const diffMin = Math.round(diffMs / 60000)
+      if (diffMin < 60) {
+        setNextDueIn(`${diffMin} Min`)
+      } else {
+        const diffH = Math.round(diffMin / 60)
+        if (diffH < 24) {
+          setNextDueIn(`${diffH} Std`)
+        } else {
+          setNextDueIn(`${Math.round(diffH / 24)} Tag${Math.round(diffH / 24) > 1 ? 'en' : ''}`)
+        }
+      }
+    }
+    findNext()
+  }, [totalCount])
 
   // Filter out fachScores for past exams (done after 13:00 on exam day)
   const nowDate = new Date()
@@ -124,6 +151,9 @@ export function Dashboard() {
               <div>
                 <p className="text-zinc-400 text-xs leading-relaxed">
                   Deine Karten werden nach dem <b className="text-zinc-300">Spaced-Repetition-Prinzip</b> eingeplant — sie kommen genau dann zurück, wenn du sie fast vergessen hast. So lernst du effizienter.
+                  {nextDueIn && (
+                    <span className="block mt-1.5 text-zinc-300">Nächste Karten in <b>{nextDueIn}</b>.</span>
+                  )}
                 </p>
                 <button
                   onClick={() => navigate('/review?intensive=1')}
