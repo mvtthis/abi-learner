@@ -28,24 +28,24 @@ export function usePublicDecks(userId: string | null) {
 
   const importDeck = async (deckId: string) => {
     setImporting(deckId)
-    const count = await importDeckToLocal(deckId, userId ?? undefined)
-    if (count > 0) {
-      setImportedDeckIds((prev) => [...prev, deckId])
+    const { added, updated } = await importDeckToLocal(deckId, userId ?? undefined)
+    if (added > 0 || updated > 0) {
+      setImportedDeckIds((prev) => [...new Set([...prev, deckId])])
     }
     setImporting(null)
-    return count
+    return added
   }
 
   const importAllDecks = async () => {
-    let totalCount = 0
+    let totalAdded = 0
+    let totalUpdated = 0
     for (const deck of decks) {
-      if (!importedDeckIds.includes(deck.id)) {
-        const count = await importDeckToLocal(deck.id, userId ?? undefined)
-        totalCount += count
-      }
+      const { added, updated } = await importDeckToLocal(deck.id, userId ?? undefined)
+      totalAdded += added
+      totalUpdated += updated
     }
     setImportedDeckIds(decks.map((d) => d.id))
-    return totalCount
+    return { added: totalAdded, updated: totalUpdated }
   }
 
   return { decks, importedDeckIds, loading, importing, importDeck, importAllDecks }

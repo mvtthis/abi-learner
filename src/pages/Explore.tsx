@@ -3,8 +3,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { usePublicDecks } from '@/hooks/usePublicDecks'
 import { DeckCard } from '@/components/DeckCard'
 import { isSupabaseConfigured } from '@/lib/supabase'
-import { db, INACTIVE_NEXT_REVIEW } from '@/lib/db'
-import { fetchPublicCards } from '@/lib/deckImport'
 
 const SUBJECT_ORDER = ['bio', 'geschichte', 'sport', 'deutsch', 'englisch']
 const SUBJECT_LABELS: Record<string, string> = {
@@ -20,92 +18,31 @@ export function Explore() {
   const { decks, importedDeckIds, loading, importing, importDeck, importAllDecks } =
     usePublicDecks(user?.id ?? null)
   const [importingAll, setImportingAll] = useState(false)
-  const [importAllResult, setImportAllResult] = useState<string | null>(null)
-  const [confirmReset, setConfirmReset] = useState(false)
-  const [reimportingSubject, setReimportingSubject] = useState<string | null>(null)
+  const [importResult, setImportResult] = useState<string | null>(null)
 
-  const handleImportAll = async (clearFirst: boolean) => {
+  const handleUpdateAll = async () => {
     setImportingAll(true)
-    setImportAllResult(null)
-    setConfirmReset(false)
-
-    if (clearFirst) {
-      await db.cards.clear()
-      await db.reviewLogs.clear()
-      await db.activatedTopics.clear()
-      localStorage.removeItem('abi-learner-imported-decks')
-    }
-
-    const count = await importAllDecks()
-    setImportAllResult(`${count} Karten importiert!`)
+    setImportResult(null)
+    const { added, updated } = await importAllDecks()
+    const parts: string[] = []
+    if (added > 0) parts.push(`${added} neu`)
+    if (updated > 0) parts.push(`${updated} aktualisiert`)
+    setImportResult(parts.length > 0 ? parts.join(', ') : 'Alles auf dem neuesten Stand')
     setImportingAll(false)
   }
 
-  const handleReimportSubject = async (subject: string) => {
-    setReimportingSubject(subject)
-
-    // Get existing local cards for this subject
-    const localCards = await db.cards
-      .filter((c) => !c.deleted && c.tags.some((t) => t.toLowerCase().startsWith(subject + '::')))
-      .toArray()
-    const localByFront = new Map(localCards.map((c) => [c.front, c]))
-
-    // Fetch fresh cards from Supabase for all decks of this subject
+  const handleUpdateSubject = async (subject: string) => {
+    setImportResult(null)
     const subjectDecks = decks.filter((d) => d.subject === subject)
-    let updated = 0
-    let added = 0
-
+    let totalAdded = 0
+    let totalUpdated = 0
     for (const deck of subjectDecks) {
-      const publicCards = await fetchPublicCards(deck.id)
-      for (const pc of publicCards) {
-        const existing = localByFront.get(pc.front)
-        if (existing) {
-          // Update content but keep progress (repetitions, next_review, review logs)
-          if (existing.back !== pc.back || JSON.stringify(existing.tags) !== JSON.stringify(pc.tags)) {
-            await db.cards.update(existing.id, {
-              back: pc.back,
-              tags: pc.tags,
-              updated_at: Date.now(),
-              sync_status: 'pending',
-            })
-            updated++
-          }
-          localByFront.delete(pc.front) // Mark as still exists
-        } else {
-          // New card — add it
-          const { v4: uuidv4 } = await import('uuid')
-          await db.cards.put({
-            id: uuidv4(),
-            front: pc.front,
-            back: pc.back,
-            tags: pc.tags,
-            created_at: Date.now(),
-            updated_at: Date.now(),
-            deleted: false,
-            ease_factor: 2.5,
-            interval: 0,
-            repetitions: 0,
-            next_review: INACTIVE_NEXT_REVIEW,
-            sync_status: 'pending',
-          })
-          added++
-        }
-      }
+      const count = await importDeck(deck.id)
+      totalAdded += count
     }
-
-    // Cards that no longer exist in public decks — soft delete
-    let removed = 0
-    for (const [, card] of localByFront) {
-      await db.cards.update(card.id, { deleted: true, updated_at: Date.now(), sync_status: 'pending' })
-      removed++
-    }
-
     const parts: string[] = []
-    if (updated > 0) parts.push(`${updated} aktualisiert`)
-    if (added > 0) parts.push(`${added} neu`)
-    if (removed > 0) parts.push(`${removed} entfernt`)
-    setImportAllResult(`${SUBJECT_LABELS[subject]}: ${parts.join(', ') || 'Keine Änderungen'}`)
-    setReimportingSubject(null)
+    if (totalAdded > 0) parts.push(`${totalAdded} neu`)
+    setImportResult(`${SUBJECT_LABELS[subject]}: ${parts.length > 0 ? parts.join(', ') : 'Bereits aktuell'}`)
   }
 
   if (!isSupabaseConfigured()) {
@@ -137,73 +74,40 @@ export function Explore() {
     grouped.set(deck.subject, group)
   }
 
-  const allImported = decks.length > 0 && decks.every((d) => importedDeckIds.includes(d.id))
   const totalCards = decks.reduce((s, d) => s + d.card_count, 0)
 
   return (
     <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
       <h2 className="text-lg font-bold text-white">Deck-Bibliothek</h2>
 
-      {/* Import All */}
+      {/* Update All */}
       {decks.length > 0 && (
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
-          {importAllResult ? (
+          {importResult ? (
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-3 text-center">
-              <p className="text-emerald-400 text-sm font-medium">{importAllResult}</p>
+              <p className="text-emerald-400 text-sm font-medium">{importResult}</p>
               <button
-                onClick={() => setImportAllResult(null)}
+                onClick={() => setImportResult(null)}
                 className="text-zinc-500 text-xs mt-2 hover:text-zinc-300"
               >
                 Schließen
               </button>
-            </div>
-          ) : confirmReset ? (
-            <div className="space-y-3">
-              <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
-                <p className="text-red-400 text-sm font-medium">Achtung!</p>
-                <p className="text-zinc-400 text-xs mt-1">
-                  Das löscht alle Karten und deinen gesamten Lernfortschritt unwiderruflich.
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setConfirmReset(false)}
-                  className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700"
-                >
-                  Abbrechen
-                </button>
-                <button
-                  onClick={() => handleImportAll(true)}
-                  disabled={importingAll}
-                  className="flex-1 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-500 disabled:opacity-50"
-                >
-                  {importingAll ? 'Lösche & importiere...' : 'Ja, alles zurücksetzen'}
-                </button>
-              </div>
             </div>
           ) : (
             <>
               <p className="text-zinc-400 text-xs">
                 {decks.length} Decks · {totalCards} Karten
               </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setConfirmReset(true)}
-                  disabled={importingAll}
-                  className="flex-1 py-2.5 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 disabled:opacity-50 transition-colors"
-                >
-                  Alle neu importieren
-                </button>
-                {!allImported && (
-                  <button
-                    onClick={() => handleImportAll(false)}
-                    disabled={importingAll}
-                    className="flex-1 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
-                  >
-                    {importingAll ? 'Importiere...' : 'Fehlende hinzufügen'}
-                  </button>
-                )}
-              </div>
+              <button
+                onClick={handleUpdateAll}
+                disabled={importingAll}
+                className="w-full py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 disabled:opacity-50 transition-colors"
+              >
+                {importingAll ? 'Aktualisiere...' : 'Alle aktualisieren'}
+              </button>
+              <p className="text-zinc-600 text-[10px]">
+                Aktualisiert Karteninhalte ohne Lernfortschritt zu löschen.
+              </p>
             </>
           )}
         </div>
@@ -217,8 +121,7 @@ export function Explore() {
 
       {SUBJECT_ORDER.filter((s) => grouped.has(s)).map((subject) => {
         const subjectDecks = grouped.get(subject)!
-        const subjectImported = subjectDecks.every((d) => importedDeckIds.includes(d.id))
-        const isReimporting = reimportingSubject === subject
+        const isUpdating = subjectDecks.some((d) => importing === d.id)
 
         return (
           <div key={subject}>
@@ -227,11 +130,11 @@ export function Explore() {
                 {SUBJECT_LABELS[subject] ?? subject}
               </h3>
               <button
-                onClick={() => handleReimportSubject(subject)}
-                disabled={isReimporting || importingAll}
+                onClick={() => handleUpdateSubject(subject)}
+                disabled={isUpdating || importingAll}
                 className="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-300 disabled:opacity-50 transition-colors"
               >
-                {isReimporting ? 'Aktualisiere...' : 'Aktualisieren'}
+                {isUpdating ? 'Aktualisiere...' : 'Aktualisieren'}
               </button>
             </div>
             <div className="grid grid-cols-1 gap-2">

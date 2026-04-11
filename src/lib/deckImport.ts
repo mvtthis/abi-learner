@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import { db, type Card, INACTIVE_NEXT_REVIEW } from './db'
 import { supabase, isSupabaseConfigured } from './supabase'
 
@@ -61,32 +60,63 @@ export async function fetchPublicCards(deckId: string): Promise<PublicCard[]> {
   return data
 }
 
+/**
+ * Import/update a deck. Uses public_cards.id as local card ID.
+ * - Existing cards: update front/back/tags, keep progress
+ * - New cards: add with inactive next_review
+ * Returns { added, updated }
+ */
 export async function importDeckToLocal(
   deckId: string,
   userId?: string
-): Promise<number> {
+): Promise<{ added: number; updated: number }> {
   const publicCards = await fetchPublicCards(deckId)
-  if (publicCards.length === 0) return 0
+  if (publicCards.length === 0) return { added: 0, updated: 0 }
 
   const now = Date.now()
-  const cards: Card[] = publicCards.map((pc) => ({
-    id: uuidv4(),
-    front: pc.front,
-    back: pc.back,
-    tags: pc.tags,
-    created_at: now,
-    updated_at: now,
-    deleted: false,
-    ease_factor: 2.5,
-    interval: 0,
-    repetitions: 0,
-    next_review: INACTIVE_NEXT_REVIEW,
-    sync_status: 'pending' as const,
-  }))
+  let added = 0
+  let updated = 0
 
-  await db.cards.bulkPut(cards)
+  for (const pc of publicCards) {
+    const existing = await db.cards.get(pc.id)
 
-  // Track import locally + in Supabase
+    if (existing) {
+      // Update content, keep progress
+      if (existing.front !== pc.front || existing.back !== pc.back || JSON.stringify(existing.tags) !== JSON.stringify(pc.tags)) {
+        await db.cards.update(pc.id, {
+          front: pc.front,
+          back: pc.back,
+          tags: pc.tags,
+          updated_at: now,
+          deleted: false,
+          sync_status: 'pending',
+        })
+        updated++
+      } else if (existing.deleted) {
+        // Restore soft-deleted card
+        await db.cards.update(pc.id, { deleted: false, updated_at: now, sync_status: 'pending' })
+        updated++
+      }
+    } else {
+      // New card — use public_cards.id as local ID
+      await db.cards.put({
+        id: pc.id,
+        front: pc.front,
+        back: pc.back,
+        tags: pc.tags,
+        created_at: now,
+        updated_at: now,
+        deleted: false,
+        ease_factor: 2.5,
+        interval: 0,
+        repetitions: 0,
+        next_review: INACTIVE_NEXT_REVIEW,
+        sync_status: 'pending',
+      })
+      added++
+    }
+  }
+
   addLocalImportedDeck(deckId)
   if (supabase && userId) {
     await supabase
@@ -94,16 +124,14 @@ export async function importDeckToLocal(
       .upsert({ user_id: userId, deck_id: deckId })
   }
 
-  return cards.length
+  return { added, updated }
 }
 
 export async function getUserImportedDecks(
   userId: string | null
 ): Promise<string[]> {
-  // Always include local imports
   const localIds = getLocalImportedDecks()
 
-  // Merge with Supabase if logged in
   if (supabase && isSupabaseConfigured() && userId) {
     const { data } = await supabase
       .from('user_deck_imports')

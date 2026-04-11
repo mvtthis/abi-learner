@@ -14,9 +14,11 @@ export function Review() {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [showFilter, setShowFilter] = useState(false)
   const [canFlip, setCanFlip] = useState(true)
+  const [intensive, setIntensive] = useState(false)
   const tags = useAllTags()
   const { session, loading, flip, answer, reload } = useReviewSession(
-    selectedTags.length > 0 ? selectedTags : undefined
+    selectedTags.length > 0 ? selectedTags : undefined,
+    intensive
   )
 
   const handleAnswer = async (correct: boolean) => {
@@ -143,13 +145,21 @@ export function Review() {
           <p className="text-zinc-400 text-sm mb-1">Übung macht den Meister.</p>
         )}
 
-        <div className="flex gap-3 w-full max-w-xs mt-4">
+        <div className="flex flex-col gap-2 w-full max-w-xs mt-4">
           <button
-            onClick={reload}
-            className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm active:bg-blue-500"
+            onClick={() => { setIntensive(false); reload() }}
+            className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm active:bg-blue-500"
           >
             Nächste Session
           </button>
+          {!intensive && (
+            <button
+              onClick={() => { setIntensive(true); reload() }}
+              className="w-full py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700"
+            >
+              Intensiv üben
+            </button>
+          )}
         </div>
       </div>
     )

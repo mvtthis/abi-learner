@@ -128,7 +128,7 @@ function clearSessionStorage() {
   sessionStorage.removeItem(SESSION_STORAGE_KEY)
 }
 
-export function useReviewSession(filterTags?: string[]) {
+export function useReviewSession(filterTags?: string[], intensive?: boolean) {
   const [session, setSession] = useState<ReviewSession>({
     queue: [],
     currentCard: null,
@@ -163,21 +163,64 @@ export function useReviewSession(filterTags?: string[]) {
     const fachBefore = new Map(scores.fachScores.map((f) => [f.fach, f.score]))
     const progressBefore = { overall: scores.overall, fach: fachBefore }
 
-    const { newCards, reviewCards, wrongCounts } = await getDueCards(filterTags)
-
-    // STRICT: new cards only until ALL are done. Reviews come AFTER.
     let sessionCards: Card[]
     let totalAvailable: number
-    if (newCards.length > 0) {
-      // Pick SESSION_SIZE cards weighted by failures, then shuffle for random order
-      const picked = weightedShuffle(newCards, wrongCounts).slice(0, SESSION_SIZE)
+
+    if (intensive) {
+      // Intensive mode: ALL reviewed cards from activated topics, weakest first
+      const activatedTopics = await getActivatedTopics()
+      const examDates = await getExamDates()
+
+      const isInActivatedTopic = (card: Card) =>
+        card.tags.some((tag) => {
+          const parts = tag.split('::')
+          if (parts.length < 2) return activatedTopics.has(parts[0])
+          return activatedTopics.has(parts.slice(0, 2).join('::'))
+        })
+
+      const isExamPast = (card: Card) => {
+        const fach = getCardFach(card)
+        const exam = examDates.get(fach)
+        if (!exam) return false
+        const examDate = new Date(exam.date)
+        examDate.setHours(13, 0, 0, 0)
+        return Date.now() >= examDate.getTime()
+      }
+
+      const allLogs = await db.reviewLogs.toArray()
+      const wrongCounts = new Map<string, number>()
+      for (const log of allLogs) {
+        if (log.quality <= 1) wrongCounts.set(log.card_id, (wrongCounts.get(log.card_id) ?? 0) + 1)
+      }
+
+      let allReviewed = await db.cards
+        .filter((c) => !c.deleted && c.repetitions > 0 && isInActivatedTopic(c) && !isExamPast(c))
+        .toArray()
+
+      if (filterTags && filterTags.length > 0) {
+        allReviewed = allReviewed.filter((card) =>
+          filterTags.some((ft) =>
+            card.tags.some((t) => t.toLowerCase().startsWith(ft.toLowerCase()))
+          )
+        )
+      }
+
+      const picked = weightedShuffle(allReviewed, wrongCounts).slice(0, SESSION_SIZE)
       sessionCards = shuffle(picked)
-      totalAvailable = newCards.length
+      totalAvailable = allReviewed.length
     } else {
-      // Pick SESSION_SIZE reviews weighted by failures, then shuffle
-      const picked = weightedShuffle(reviewCards, wrongCounts).slice(0, SESSION_SIZE)
-      sessionCards = shuffle(picked)
-      totalAvailable = reviewCards.length
+      const { newCards, reviewCards, wrongCounts } = await getDueCards(filterTags)
+
+      // STRICT: new cards only until ALL are done. Reviews come AFTER.
+      if (newCards.length > 0) {
+        const picked = weightedShuffle(newCards, wrongCounts).slice(0, SESSION_SIZE)
+        sessionCards = shuffle(picked)
+        totalAvailable = newCards.length
+      } else {
+        const picked = weightedShuffle(reviewCards, wrongCounts).slice(0, SESSION_SIZE)
+        sessionCards = shuffle(picked)
+        totalAvailable = reviewCards.length
+      }
     }
     const remaining = totalAvailable - sessionCards.length
     const sessionsLeft = Math.ceil(remaining / SESSION_SIZE)
@@ -199,7 +242,7 @@ export function useReviewSession(filterTags?: string[]) {
     setSession(newSession)
     if (!newSession.isComplete) saveSessionToStorage(newSession)
     setLoading(false)
-  }, [filterTags])
+  }, [filterTags, intensive])
 
   useEffect(() => {
     loadSession()
