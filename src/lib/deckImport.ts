@@ -69,9 +69,9 @@ export async function fetchPublicCards(deckId: string): Promise<PublicCard[]> {
 export async function importDeckToLocal(
   deckId: string,
   userId?: string
-): Promise<{ added: number; updated: number }> {
+): Promise<{ added: number; updated: number; cleaned: number }> {
   const publicCards = await fetchPublicCards(deckId)
-  if (publicCards.length === 0) return { added: 0, updated: 0 }
+  if (publicCards.length === 0) return { added: 0, updated: 0, cleaned: 0 }
 
   const now = Date.now()
   let added = 0
@@ -117,6 +117,32 @@ export async function importDeckToLocal(
     }
   }
 
+  // Cleanup: remove old UUID-based duplicates (same front text, different ID)
+  const publicFronts = new Map(publicCards.map((pc) => [pc.front, pc.id]))
+  const allLocalCards = await db.cards.filter((c) => !c.deleted).toArray()
+  let cleaned = 0
+  for (const local of allLocalCards) {
+    const correctId = publicFronts.get(local.front)
+    if (correctId && local.id !== correctId) {
+      // This is an old UUID-based card that now has a Supabase-ID version
+      // Transfer progress to the new card if it has more reviews
+      const newCard = await db.cards.get(correctId)
+      if (newCard && local.repetitions > newCard.repetitions) {
+        await db.cards.update(correctId, {
+          repetitions: local.repetitions,
+          next_review: local.next_review,
+          ease_factor: local.ease_factor,
+          interval: local.interval,
+          updated_at: Date.now(),
+          sync_status: 'pending',
+        })
+      }
+      // Delete the old duplicate
+      await db.cards.delete(local.id)
+      cleaned++
+    }
+  }
+
   addLocalImportedDeck(deckId)
   if (supabase && userId) {
     await supabase
@@ -124,7 +150,7 @@ export async function importDeckToLocal(
       .upsert({ user_id: userId, deck_id: deckId })
   }
 
-  return { added, updated }
+  return { added, updated, cleaned }
 }
 
 export async function getUserImportedDecks(

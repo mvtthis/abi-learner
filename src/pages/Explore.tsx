@@ -23,10 +23,11 @@ export function Explore() {
   const handleUpdateAll = async () => {
     setImportingAll(true)
     setImportResult(null)
-    const { added, updated } = await importAllDecks()
+    const { added, updated, cleaned } = await importAllDecks()
     const parts: string[] = []
     if (added > 0) parts.push(`${added} neu`)
     if (updated > 0) parts.push(`${updated} aktualisiert`)
+    if (cleaned > 0) parts.push(`${cleaned} Duplikate bereinigt`)
     setImportResult(parts.length > 0 ? parts.join(', ') : 'Alles auf dem neuesten Stand')
     setImportingAll(false)
   }
