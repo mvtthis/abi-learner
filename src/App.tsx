@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { getSettings, seedInitialSnapshot } from '@/lib/db'
+import { getSettings, cleanupBadSnapshots } from '@/lib/db'
 import { Layout } from '@/components/Layout'
 import { Dashboard } from '@/pages/Dashboard'
 import { Review } from '@/pages/Review'
@@ -20,7 +20,7 @@ function AppRouter() {
     async function init() {
       const s = await getSettings()
       setOnboardingComplete(s.onboarding_complete)
-      await seedInitialSnapshot()
+      await cleanupBadSnapshots()
     }
     init()
   }, [])

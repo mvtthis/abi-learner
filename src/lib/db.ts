@@ -243,46 +243,25 @@ export async function getSessionSnapshots(): Promise<SessionSnapshot[]> {
   return db.sessionSnapshots.orderBy('sessionNumber').toArray()
 }
 
-/** If snapshots are empty or missing topic-level data, reseed from current state */
-export async function seedInitialSnapshot(): Promise<void> {
+/** Clean up any bad seed snapshots (all-zero from before tracking was added) */
+export async function cleanupBadSnapshots(): Promise<void> {
   try {
     const snapshots = await db.sessionSnapshots.toArray()
-
-    const hasTopicData = snapshots.some((s) =>
-      Object.keys(s.topicScores).some((k) => k.includes('::'))
-    )
-
-    if (snapshots.length > 0 && hasTopicData) return
-
-    // Clear old fach-only snapshots
-    if (snapshots.length > 0) {
-      await db.sessionSnapshots.clear()
-    }
-
-    const reviewCount = await db.reviewLogs.count()
-    if (reviewCount === 0) return
-
-    const { calculateAllScores } = await import('./scoreCalculator')
-    const allCards = await db.cards.filter((c) => !c.deleted).toArray()
-    if (allCards.length === 0) return
-
-    const scores = calculateAllScores(allCards)
-
-    const topicScores: Record<string, number> = {}
-    for (const fs of scores.fachScores) {
-      topicScores[fs.fach] = fs.score
-    }
-    for (const [fach, topics] of scores.topicScores) {
-      for (const t of topics) {
-        topicScores[`${fach}::${t.topic.toLowerCase()}`] = t.score
+    // Remove snapshots where all topic scores are 0 (bad seed data)
+    for (const s of snapshots) {
+      const allZero = Object.values(s.topicScores).every((v) => v === 0)
+      if (allZero) {
+        await db.sessionSnapshots.delete(s.id)
       }
     }
-
-    if (Object.keys(topicScores).length > 0) {
-      await saveSessionSnapshot(topicScores)
-      console.log('Seeded initial snapshot with', Object.keys(topicScores).length, 'scores')
+    // Renumber remaining snapshots
+    const remaining = await db.sessionSnapshots.orderBy('timestamp').toArray()
+    for (let i = 0; i < remaining.length; i++) {
+      if (remaining[i].sessionNumber !== i + 1) {
+        await db.sessionSnapshots.update(remaining[i].id, { sessionNumber: i + 1 })
+      }
     }
   } catch (err) {
-    console.error('Failed to seed initial snapshot:', err)
+    console.error('Failed to cleanup snapshots:', err)
   }
 }
