@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { getSettings } from '@/lib/db'
+import { getSettings, seedInitialSnapshot } from '@/lib/db'
 import { Layout } from '@/components/Layout'
 import { Dashboard } from '@/pages/Dashboard'
 import { Review } from '@/pages/Review'
@@ -18,6 +18,7 @@ function AppRouter() {
 
   useEffect(() => {
     getSettings().then((s) => setOnboardingComplete(s.onboarding_complete))
+    seedInitialSnapshot()
   }, [])
 
   const completeOnboarding = () => setOnboardingComplete(true)

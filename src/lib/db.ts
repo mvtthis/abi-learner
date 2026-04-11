@@ -242,3 +242,29 @@ export async function saveSessionSnapshot(topicScores: Record<string, number>): 
 export async function getSessionSnapshots(): Promise<SessionSnapshot[]> {
   return db.sessionSnapshots.orderBy('sessionNumber').toArray()
 }
+
+/** If snapshots are empty but reviews exist, seed an initial snapshot from current state */
+export async function seedInitialSnapshot(): Promise<void> {
+  const snapshotCount = await db.sessionSnapshots.count()
+  if (snapshotCount > 0) return
+
+  const reviewCount = await db.reviewLogs.count()
+  if (reviewCount === 0) return
+
+  // Import here to avoid circular dependency
+  const { calculateAllScores } = await import('./scoreCalculator')
+  const allCards = await db.cards.filter((c) => !c.deleted).toArray()
+  const scores = calculateAllScores(allCards)
+
+  const topicScores: Record<string, number> = {}
+  for (const fs of scores.fachScores) {
+    topicScores[fs.fach] = fs.score
+  }
+  for (const [fach, topics] of scores.topicScores) {
+    for (const t of topics) {
+      topicScores[`${fach}::${t.topic.toLowerCase()}`] = t.score
+    }
+  }
+
+  await saveSessionSnapshot(topicScores)
+}
