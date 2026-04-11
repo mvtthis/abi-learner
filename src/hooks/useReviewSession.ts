@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { db, type Card, getActivatedTopics, saveSessionSnapshot } from '@/lib/db'
+import { db, type Card, getActivatedTopics, saveSessionSnapshot, getExamDates, getCardFach } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
 import { sortForSession, shuffle } from '@/lib/leitner'
 import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
@@ -29,6 +29,7 @@ export interface ReviewSession {
 async function getDueCards(filterTags?: string[]) {
   const now = Date.now()
   const activatedTopics = await getActivatedTopics()
+  const examDates = await getExamDates()
 
   const isInActivatedTopic = (card: Card) =>
     card.tags.some((tag) => {
@@ -38,19 +39,26 @@ async function getDueCards(filterTags?: string[]) {
       return activatedTopics.has(topicKey)
     })
 
-  // Get all review logs to know which cards have been seen before
+  // Filter out cards for exams that already happened
+  const isExamPast = (card: Card) => {
+    const fach = getCardFach(card)
+    const exam = examDates.get(fach)
+    if (!exam) return false
+    const examDate = new Date(exam.date)
+    examDate.setHours(13, 0, 0, 0)
+    return Date.now() >= examDate.getTime()
+  }
+
   const reviewedCardIds = new Set(
     (await db.reviewLogs.toArray()).map((r) => r.card_id)
   )
 
-  // Truly new = never reviewed at all (no review log entry)
   let newCards = await db.cards
-    .filter((c) => !c.deleted && !reviewedCardIds.has(c.id) && isInActivatedTopic(c))
+    .filter((c) => !c.deleted && !reviewedCardIds.has(c.id) && isInActivatedTopic(c) && !isExamPast(c))
     .toArray()
 
-  // Reviews = everything that's been seen before and is due
   let reviewCards = await db.cards
-    .filter((c) => !c.deleted && reviewedCardIds.has(c.id) && c.next_review <= now)
+    .filter((c) => !c.deleted && reviewedCardIds.has(c.id) && c.next_review <= now && !isExamPast(c))
     .toArray()
 
   if (filterTags && filterTags.length > 0) {
@@ -63,6 +71,54 @@ async function getDueCards(filterTags?: string[]) {
   }
 
   return { newCards, reviewCards }
+}
+
+const SESSION_STORAGE_KEY = 'abi-learner-active-session'
+
+function saveSessionToStorage(session: ReviewSession) {
+  try {
+    const serializable = {
+      ...session,
+      seenIds: Array.from(session.seenIds),
+      progressBefore: {
+        overall: session.progressBefore.overall,
+        fach: Array.from(session.progressBefore.fach.entries()),
+      },
+      progressAfter: session.progressAfter ? {
+        overall: session.progressAfter.overall,
+        fach: Array.from(session.progressAfter.fach.entries()),
+      } : null,
+    }
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(serializable))
+  } catch {}
+}
+
+function loadSessionFromStorage(): ReviewSession | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // Don't restore completed sessions
+    if (parsed.isComplete) {
+      sessionStorage.removeItem(SESSION_STORAGE_KEY)
+      return null
+    }
+    return {
+      ...parsed,
+      seenIds: new Set(parsed.seenIds),
+      progressBefore: {
+        overall: parsed.progressBefore.overall,
+        fach: new Map(parsed.progressBefore.fach),
+      },
+      progressAfter: null,
+    }
+  } catch {
+    return null
+  }
+}
+
+function clearSessionStorage() {
+  sessionStorage.removeItem(SESSION_STORAGE_KEY)
 }
 
 export function useReviewSession(filterTags?: string[]) {
@@ -84,6 +140,14 @@ export function useReviewSession(filterTags?: string[]) {
   const { reviewCard } = useSpacedRepetition()
 
   const loadSession = useCallback(async () => {
+    // Try to restore an active session
+    const saved = loadSessionFromStorage()
+    if (saved && saved.currentCard && saved.reviewedCount > 0) {
+      setSession(saved)
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
 
     // Snapshot current progress before session
@@ -179,7 +243,7 @@ export function useReviewSession(filterTags?: string[]) {
       // No reinsertion of wrong cards — they come back next session
       const nextCard = newQueue.shift() ?? null
 
-      return {
+      const updated = {
         ...prev,
         queue: newQueue,
         currentCard: nextCard,
@@ -190,10 +254,24 @@ export function useReviewSession(filterTags?: string[]) {
         seenIds: newSeenIds,
         progressAfter: nextCard === null ? progressAfter : prev.progressAfter,
       }
+
+      // Persist or clear session storage
+      if (updated.isComplete) {
+        clearSessionStorage()
+      } else {
+        saveSessionToStorage(updated)
+      }
+
+      return updated
     })
   }
 
-  return { session, loading, flip, answer, reload: loadSession }
+  const reload = useCallback(() => {
+    clearSessionStorage()
+    loadSession()
+  }, [loadSession])
+
+  return { session, loading, flip, answer, reload }
 }
 
 export function useDueCount(filterTags?: string[]) {
