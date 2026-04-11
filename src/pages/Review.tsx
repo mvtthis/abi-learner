@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useReviewSession } from '@/hooks/useReviewSession'
 import { useAllTags } from '@/hooks/useCards'
 import { useAuth } from '@/hooks/useAuth'
@@ -11,10 +11,11 @@ import { getFachLabel } from '@/lib/scoreCalculator'
 export function Review() {
   const { user, isConfigured } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [showFilter, setShowFilter] = useState(false)
   const [canFlip, setCanFlip] = useState(true)
-  const [intensive, setIntensive] = useState(false)
+  const [intensive, setIntensive] = useState(searchParams.get('intensive') === '1')
   const tags = useAllTags()
   const { session, loading, flip, answer, reload } = useReviewSession(
     selectedTags.length > 0 ? selectedTags : undefined,

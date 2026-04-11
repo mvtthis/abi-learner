@@ -94,37 +94,56 @@ export function Dashboard() {
       <ExamDateEditor />
 
       {/* Session CTA */}
-      <button
-        onClick={() => navigate('/review')}
-        className="w-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
-      >
-        {totalCount > 0 ? (
-          <>
-            <p className="text-3xl font-bold text-white">Session starten</p>
-            <p className="text-blue-200 text-sm mt-2">
-              {Math.min(totalCount, 20)} Karten
-              {totalCount > 20 && (
-                <span className="text-blue-300/60"> · {Math.ceil(totalCount / 20)} Sessions insgesamt</span>
-              )}
-            </p>
-          </>
-        ) : allCards.length > 0 && activatedTopics.size === 0 ? (
-          <>
-            <p className="text-blue-100 text-sm">Keine Themen aktiv</p>
-            <p className="text-lg font-bold text-white mt-1">Wähle unten Themen aus um zu starten</p>
-          </>
-        ) : allCards.length > 0 ? (
-          <>
-            <p className="text-blue-100 text-sm">Alles erledigt</p>
+      {totalCount > 0 ? (
+        <button
+          onClick={() => navigate('/review')}
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
+        >
+          <p className="text-3xl font-bold text-white">Session starten</p>
+          <p className="text-blue-200 text-sm mt-2">
+            {Math.min(totalCount, 20)} Karten
+            {totalCount > 20 && (
+              <span className="text-blue-300/60"> · {Math.ceil(totalCount / 20)} Sessions insgesamt</span>
+            )}
+          </p>
+        </button>
+      ) : allCards.length > 0 && activatedTopics.size === 0 ? (
+        <div className="w-full bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-2xl p-5">
+          <p className="text-zinc-400 text-sm">Keine Themen aktiv</p>
+          <p className="text-lg font-bold text-white mt-1">Wähle unten Themen aus um zu starten</p>
+        </div>
+      ) : allCards.length > 0 ? (
+        <div>
+          <div className="w-full bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-2xl p-5">
+            <p className="text-zinc-400 text-sm">Alles erledigt</p>
             <p className="text-xl font-bold text-white mt-1">Keine Karten fällig</p>
-          </>
-        ) : (
-          <>
-            <p className="text-blue-100 text-sm">Noch keine Karten</p>
-            <p className="text-lg font-bold text-white mt-1">Importiere Decks um loszulegen</p>
-          </>
-        )}
-      </button>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 mt-3">
+            <div className="flex gap-3">
+              <span className="text-blue-400 text-sm mt-0.5">ℹ</span>
+              <div>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  Deine Karten werden nach dem <b className="text-zinc-300">Spaced-Repetition-Prinzip</b> eingeplant — sie kommen genau dann zurück, wenn du sie fast vergessen hast. So lernst du effizienter.
+                </p>
+                <button
+                  onClick={() => navigate('/review?intensive=1')}
+                  className="text-blue-400 text-xs mt-2 hover:text-blue-300"
+                >
+                  Trotzdem weiter üben (Intensiv) →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => navigate('/explore')}
+          className="w-full bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
+        >
+          <p className="text-zinc-400 text-sm">Noch keine Karten</p>
+          <p className="text-lg font-bold text-white mt-1">Importiere Decks um loszulegen</p>
+        </button>
+      )}
 
       {/* Overall Readiness */}
       {allCards.length > 0 && activeFachScores.length > 0 && (
