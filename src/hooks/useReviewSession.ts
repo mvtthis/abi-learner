@@ -58,7 +58,7 @@ async function getDueCards(filterTags?: string[]) {
     .toArray()
 
   let reviewCards = await db.cards
-    .filter((c) => !c.deleted && reviewedCardIds.has(c.id) && c.next_review <= now && !isExamPast(c))
+    .filter((c) => !c.deleted && reviewedCardIds.has(c.id) && c.next_review <= now && isInActivatedTopic(c) && !isExamPast(c))
     .toArray()
 
   if (filterTags && filterTags.length > 0) {
