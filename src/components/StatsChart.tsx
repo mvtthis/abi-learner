@@ -11,53 +11,57 @@ function toLocalDateKey(d: Date): string {
 export function StatsChart({ days }: StatsChartProps) {
   const maxTotal = Math.max(...days.map((d) => d.total), 1)
   const today = toLocalDateKey(new Date())
-  const chartHeight = 100
+  const chartHeight = 80
+  const barWidth = 8
+  const gap = 14
+  const totalWidth = days.length * (barWidth + gap)
 
   return (
-    <svg viewBox={`0 0 ${days.length * 22} ${chartHeight + 16}`} className="w-full" style={{ maxHeight: '140px' }}>
+    <svg viewBox={`0 0 ${totalWidth} ${chartHeight + 18}`} className="w-full" style={{ maxHeight: '120px' }}>
       {days.map((day, i) => {
         const barHeight = day.total > 0
-          ? Math.max((day.total / maxTotal) * chartHeight, 6)
+          ? Math.max((day.total / maxTotal) * chartHeight, 4)
           : 0
         const correctRatio = day.total > 0 ? (day.good + day.easy) / day.total : 0
         const correctHeight = barHeight * correctRatio
         const wrongHeight = barHeight - correctHeight
-        const x = i * 22 + 2
-        const barWidth = 18
+        const x = i * (barWidth + gap) + gap / 2
         const isToday = day.date === today
 
         return (
           <g key={day.date}>
-            {/* Empty day placeholder */}
+            {/* Empty day dot */}
             {day.total === 0 && (
               <rect
-                x={x} y={chartHeight - 2}
-                width={barWidth} height={2}
-                rx={1} fill="#27272a"
+                x={x + barWidth / 2 - 1.5} y={chartHeight - 1.5}
+                width={3} height={3}
+                rx={1.5} fill="#3f3f46"
               />
             )}
-            {/* Wrong (red) bar */}
+            {/* Correct (green) bottom portion */}
+            {correctHeight > 0 && (
+              <rect
+                x={x} y={chartHeight - correctHeight}
+                width={barWidth} height={correctHeight}
+                rx={barWidth / 2}
+                fill="#22c55e" opacity={0.8}
+              />
+            )}
+            {/* Wrong (red) stacked on top */}
             {wrongHeight > 0 && (
               <rect
                 x={x} y={chartHeight - barHeight}
                 width={barWidth} height={wrongHeight}
-                rx={2} fill="#ef4444"
-              />
-            )}
-            {/* Correct (green) bar on top of wrong */}
-            {correctHeight > 0 && (
-              <rect
-                x={x} y={chartHeight - barHeight + wrongHeight}
-                width={barWidth} height={correctHeight}
-                rx={2} fill="#22c55e"
+                rx={barWidth / 2}
+                fill="#ef4444" opacity={0.7}
               />
             )}
             {/* Day label */}
             <text
-              x={x + barWidth / 2} y={chartHeight + 12}
+              x={x + barWidth / 2} y={chartHeight + 13}
               textAnchor="middle"
               fill={isToday ? '#3b82f6' : '#52525b'}
-              fontSize="8"
+              fontSize="7"
               fontWeight={isToday ? 'bold' : 'normal'}
             >
               {new Date(day.date + 'T12:00:00').getDate()}
