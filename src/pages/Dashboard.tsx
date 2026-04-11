@@ -21,10 +21,11 @@ function ExamCountdown({ examDates }: { examDates: Map<string, ExamDate> }) {
       // Exam is "done" at 13:00 on exam day
       examDate.setHours(13, 0, 0, 0)
       const diffMs = examDate.getTime() - now.getTime()
+      if (diffMs <= 0) return { ...e, days: -1 }
       const days = Math.ceil(diffMs / (24 * 60 * 60 * 1000))
-      return { ...e, days, isToday: days === 0 || (days === 1 && diffMs < 24 * 60 * 60 * 1000 && diffMs > 0) }
+      return { ...e, days }
     })
-    .filter((e) => e.days > 0 || (e.days === 0 && new Date().getHours() < 13))
+    .filter((e) => e.days >= 0)
     .sort((a, b) => a.days - b.days)
 
   if (upcoming.length === 0) return null
@@ -75,13 +76,13 @@ export function Dashboard() {
   }, [])
 
   // Filter out fachScores for past exams (done after 13:00 on exam day)
-  const now = new Date()
+  const nowDate = new Date()
   const activeFachScores = fachScores.filter((fs) => {
     const exam = examDates.get(fs.fach)
     if (!exam) return true
     const examDate = new Date(exam.date)
     examDate.setHours(13, 0, 0, 0)
-    return now.getTime() < examDate.getTime()
+    return nowDate.getTime() < examDate.getTime()
   })
 
   return (
@@ -135,7 +136,7 @@ export function Dashboard() {
                 const exam = examDates.get(fs.fach)
                 const daysLeft = exam
                   ? Math.ceil(
-                      (new Date(exam.date).getTime() - now.getTime()) /
+                      (new Date(exam.date).getTime() - nowDate.getTime()) /
                         (24 * 60 * 60 * 1000)
                     )
                   : null
