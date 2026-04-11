@@ -154,12 +154,19 @@ export function useReviewSession(filterTags?: string[]) {
         fach: new Map(freshScores.fachScores.map((f) => [f.fach, f.score])),
       }
 
-      // Save session snapshot for progress graph
-      const topicScores: Record<string, number> = {}
+      // Save session snapshot for progress graph (fach + topic level)
+      const snapshotScores: Record<string, number> = {}
       for (const fs of freshScores.fachScores) {
-        topicScores[fs.fach] = fs.score
+        snapshotScores[fs.fach] = fs.score
       }
-      await saveSessionSnapshot(topicScores)
+      // Also save per-topic scores (e.g. sport::trainingslehre)
+      for (const [fach, topics] of freshScores.topicScores) {
+        for (const t of topics) {
+          const topicKey = `${fach}::${t.topic.toLowerCase()}`
+          snapshotScores[topicKey] = t.score
+        }
+      }
+      await saveSessionSnapshot(snapshotScores)
     }
 
     setSession((prev) => {
