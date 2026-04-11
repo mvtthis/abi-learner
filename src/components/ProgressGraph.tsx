@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '@/lib/db'
+import { db, getExamDates } from '@/lib/db'
 import { getFachLabel } from '@/lib/scoreCalculator'
 
 const FACH_ORDER = ['sport', 'bio', 'geschichte', 'deutsch', 'englisch']
@@ -18,6 +18,27 @@ function capitalize(s: string): string {
 export function ProgressGraph() {
   const [selectedFach, setSelectedFach] = useState<string | null>(null)
   const [selectedSession, setSelectedSession] = useState<number | null>(null)
+  const [defaultSet, setDefaultSet] = useState(false)
+
+  // Default to next upcoming exam fach
+  useEffect(() => {
+    if (defaultSet) return
+    getExamDates().then((examDates) => {
+      const now = Date.now()
+      let nextFach: string | null = null
+      let nextDate = Infinity
+      for (const [fach, exam] of examDates) {
+        const d = new Date(exam.date)
+        d.setHours(13, 0, 0, 0)
+        if (d.getTime() > now && d.getTime() < nextDate) {
+          nextDate = d.getTime()
+          nextFach = fach
+        }
+      }
+      if (nextFach) setSelectedFach(nextFach)
+      setDefaultSet(true)
+    })
+  }, [defaultSet])
 
   const snapshots = useLiveQuery(() =>
     db.sessionSnapshots.orderBy('sessionNumber').toArray()
