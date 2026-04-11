@@ -94,10 +94,12 @@ export function isDueForSession(
 }
 
 /**
- * Sort cards for a session: lowest level first, shuffle within levels.
+ * Sort cards for a session: lowest level first, weighted shuffle within levels.
  */
-export function sortForSession<T extends { repetitions: number }>(cards: T[]): T[] {
-  // Group by level
+export function sortForSession<T extends { repetitions: number; id: string }>(
+  cards: T[],
+  wrongCounts?: Map<string, number>
+): T[] {
   const groups = new Map<number, T[]>()
   for (const card of cards) {
     const level = card.repetitions
@@ -105,11 +107,46 @@ export function sortForSession<T extends { repetitions: number }>(cards: T[]): T
     groups.get(level)!.push(card)
   }
 
-  // Shuffle within each level, then concat in level order
   const result: T[] = []
   const levels = Array.from(groups.keys()).sort((a, b) => a - b)
   for (const level of levels) {
-    result.push(...shuffle(groups.get(level)!))
+    const group = groups.get(level)!
+    if (wrongCounts) {
+      result.push(...weightedShuffle(group, wrongCounts))
+    } else {
+      result.push(...shuffle(group))
+    }
+  }
+  return result
+}
+
+/**
+ * Weighted shuffle: cards with more wrong answers appear earlier.
+ * Each card gets a weight = 1 + wrongCount. Higher weight = picked sooner.
+ */
+export function weightedShuffle<T extends { id: string }>(
+  cards: T[],
+  wrongCounts: Map<string, number>
+): T[] {
+  const weighted = cards.map((c) => ({
+    card: c,
+    weight: 1 + (wrongCounts.get(c.id) ?? 0),
+  }))
+
+  const result: T[] = []
+  while (weighted.length > 0) {
+    const totalWeight = weighted.reduce((s, w) => s + w.weight, 0)
+    let rand = Math.random() * totalWeight
+    let idx = 0
+    for (let i = 0; i < weighted.length; i++) {
+      rand -= weighted[i].weight
+      if (rand <= 0) {
+        idx = i
+        break
+      }
+    }
+    result.push(weighted[idx].card)
+    weighted.splice(idx, 1)
   }
   return result
 }

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { db, type Card, getActivatedTopics, saveSessionSnapshot, getExamDates, getCardFach } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
-import { sortForSession, shuffle } from '@/lib/leitner'
+import { sortForSession, weightedShuffle } from '@/lib/leitner'
 import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
 
 const SESSION_SIZE = 20
@@ -49,9 +49,16 @@ async function getDueCards(filterTags?: string[]) {
     return Date.now() >= examDate.getTime()
   }
 
-  const reviewedCardIds = new Set(
-    (await db.reviewLogs.toArray()).map((r) => r.card_id)
-  )
+  const allLogs = await db.reviewLogs.toArray()
+  const reviewedCardIds = new Set(allLogs.map((r) => r.card_id))
+
+  // Count wrong answers per card for weighted sorting
+  const wrongCounts = new Map<string, number>()
+  for (const log of allLogs) {
+    if (log.quality <= 1) {
+      wrongCounts.set(log.card_id, (wrongCounts.get(log.card_id) ?? 0) + 1)
+    }
+  }
 
   let newCards = await db.cards
     .filter((c) => !c.deleted && !reviewedCardIds.has(c.id) && isInActivatedTopic(c) && !isExamPast(c))
@@ -70,7 +77,7 @@ async function getDueCards(filterTags?: string[]) {
     newCards = newCards.filter(matchesFilter)
   }
 
-  return { newCards, reviewCards }
+  return { newCards, reviewCards, wrongCounts }
 }
 
 const SESSION_STORAGE_KEY = 'abi-learner-active-session'
@@ -156,19 +163,19 @@ export function useReviewSession(filterTags?: string[]) {
     const fachBefore = new Map(scores.fachScores.map((f) => [f.fach, f.score]))
     const progressBefore = { overall: scores.overall, fach: fachBefore }
 
-    const { newCards, reviewCards } = await getDueCards(filterTags)
+    const { newCards, reviewCards, wrongCounts } = await getDueCards(filterTags)
 
     // STRICT: new cards only until ALL are done. Reviews come AFTER.
     let sessionCards: Card[]
     let totalAvailable: number
     if (newCards.length > 0) {
-      // Only new cards — no reviews mixed in at all
-      const shuffled = shuffle(newCards)
-      sessionCards = shuffled.slice(0, SESSION_SIZE)
+      // New cards weighted by past failures (cards you got wrong before come first)
+      const weighted = weightedShuffle(newCards, wrongCounts)
+      sessionCards = weighted.slice(0, SESSION_SIZE)
       totalAvailable = newCards.length
     } else {
-      // All new cards done — now reviews only
-      const sorted = sortForSession(reviewCards)
+      // Reviews: sort by level, within same level weight by failures
+      const sorted = sortForSession(reviewCards, wrongCounts)
       sessionCards = sorted.slice(0, SESSION_SIZE)
       totalAvailable = reviewCards.length
     }
