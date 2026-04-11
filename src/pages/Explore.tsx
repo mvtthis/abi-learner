@@ -3,7 +3,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { usePublicDecks } from '@/hooks/usePublicDecks'
 import { DeckCard } from '@/components/DeckCard'
 import { isSupabaseConfigured } from '@/lib/supabase'
-import { db } from '@/lib/db'
+import { db, INACTIVE_NEXT_REVIEW } from '@/lib/db'
+import { fetchPublicCards } from '@/lib/deckImport'
 
 const SUBJECT_ORDER = ['bio', 'geschichte', 'sport', 'deutsch', 'englisch']
 const SUBJECT_LABELS: Record<string, string> = {
@@ -43,36 +44,67 @@ export function Explore() {
   const handleReimportSubject = async (subject: string) => {
     setReimportingSubject(subject)
 
-    // Delete existing cards for this subject
-    const subjectCards = await db.cards
-      .filter((c) => c.tags.some((t) => t.toLowerCase().startsWith(subject + '::')))
+    // Get existing local cards for this subject
+    const localCards = await db.cards
+      .filter((c) => !c.deleted && c.tags.some((t) => t.toLowerCase().startsWith(subject + '::')))
       .toArray()
+    const localByFront = new Map(localCards.map((c) => [c.front, c]))
 
-    const cardIds = subjectCards.map((c) => c.id)
-    if (cardIds.length > 0) {
-      await db.cards.bulkDelete(cardIds)
-      // Delete related review logs
-      const logs = await db.reviewLogs
-        .filter((r) => cardIds.includes(r.card_id))
-        .toArray()
-      await db.reviewLogs.bulkDelete(logs.map((l) => l.id))
-      // Remove activated topics for this subject
-      const topics = await db.activatedTopics
-        .filter((t) => t.topic.toLowerCase().startsWith(subject + '::'))
-        .toArray()
-      for (const t of topics) {
-        await db.activatedTopics.delete(t.topic)
+    // Fetch fresh cards from Supabase for all decks of this subject
+    const subjectDecks = decks.filter((d) => d.subject === subject)
+    let updated = 0
+    let added = 0
+
+    for (const deck of subjectDecks) {
+      const publicCards = await fetchPublicCards(deck.id)
+      for (const pc of publicCards) {
+        const existing = localByFront.get(pc.front)
+        if (existing) {
+          // Update content but keep progress (repetitions, next_review, review logs)
+          if (existing.back !== pc.back || JSON.stringify(existing.tags) !== JSON.stringify(pc.tags)) {
+            await db.cards.update(existing.id, {
+              back: pc.back,
+              tags: pc.tags,
+              updated_at: Date.now(),
+              sync_status: 'pending',
+            })
+            updated++
+          }
+          localByFront.delete(pc.front) // Mark as still exists
+        } else {
+          // New card — add it
+          const { v4: uuidv4 } = await import('uuid')
+          await db.cards.put({
+            id: uuidv4(),
+            front: pc.front,
+            back: pc.back,
+            tags: pc.tags,
+            created_at: Date.now(),
+            updated_at: Date.now(),
+            deleted: false,
+            ease_factor: 2.5,
+            interval: 0,
+            repetitions: 0,
+            next_review: INACTIVE_NEXT_REVIEW,
+            sync_status: 'pending',
+          })
+          added++
+        }
       }
     }
 
-    // Import all decks for this subject
-    const subjectDecks = decks.filter((d) => d.subject === subject)
-    let count = 0
-    for (const deck of subjectDecks) {
-      count += await importDeck(deck.id)
+    // Cards that no longer exist in public decks — soft delete
+    let removed = 0
+    for (const [, card] of localByFront) {
+      await db.cards.update(card.id, { deleted: true, updated_at: Date.now(), sync_status: 'pending' })
+      removed++
     }
 
-    setImportAllResult(`${SUBJECT_LABELS[subject]}: ${count} Karten neu importiert!`)
+    const parts: string[] = []
+    if (updated > 0) parts.push(`${updated} aktualisiert`)
+    if (added > 0) parts.push(`${added} neu`)
+    if (removed > 0) parts.push(`${removed} entfernt`)
+    setImportAllResult(`${SUBJECT_LABELS[subject]}: ${parts.join(', ') || 'Keine Änderungen'}`)
     setReimportingSubject(null)
   }
 
@@ -199,7 +231,7 @@ export function Explore() {
                 disabled={isReimporting || importingAll}
                 className="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-300 disabled:opacity-50 transition-colors"
               >
-                {isReimporting ? 'Importiere...' : 'Neu importieren'}
+                {isReimporting ? 'Aktualisiere...' : 'Aktualisieren'}
               </button>
             </div>
             <div className="grid grid-cols-1 gap-2">
