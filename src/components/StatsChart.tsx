@@ -11,16 +11,16 @@ function toLocalDateKey(d: Date): string {
 export function StatsChart({ days }: StatsChartProps) {
   const maxTotal = Math.max(...days.map((d) => d.total), 1)
   const today = toLocalDateKey(new Date())
-  const chartHeight = 80
-  const barWidth = 8
-  const gap = 14
+  const chartHeight = 100
+  const barWidth = 18
+  const gap = 4
   const totalWidth = days.length * (barWidth + gap)
 
   return (
-    <svg viewBox={`0 0 ${totalWidth} ${chartHeight + 18}`} className="w-full" style={{ maxHeight: '120px' }}>
+    <svg viewBox={`0 0 ${totalWidth} ${chartHeight + 16}`} className="w-full" style={{ maxHeight: '140px' }}>
       {days.map((day, i) => {
         const barHeight = day.total > 0
-          ? Math.max((day.total / maxTotal) * chartHeight, 4)
+          ? Math.max((day.total / maxTotal) * chartHeight, 6)
           : 0
         const correctRatio = day.total > 0 ? (day.good + day.easy) / day.total : 0
         const correctHeight = barHeight * correctRatio
@@ -30,12 +30,12 @@ export function StatsChart({ days }: StatsChartProps) {
 
         return (
           <g key={day.date}>
-            {/* Empty day dot */}
+            {/* Empty day placeholder */}
             {day.total === 0 && (
               <rect
-                x={x + barWidth / 2 - 1.5} y={chartHeight - 1.5}
-                width={3} height={3}
-                rx={1.5} fill="#3f3f46"
+                x={x} y={chartHeight - 2}
+                width={barWidth} height={2}
+                rx={1} fill="#27272a"
               />
             )}
             {/* Correct (green) bottom portion */}
@@ -43,7 +43,7 @@ export function StatsChart({ days }: StatsChartProps) {
               <rect
                 x={x} y={chartHeight - correctHeight}
                 width={barWidth} height={correctHeight}
-                rx={barWidth / 2}
+                rx={2}
                 fill="#22c55e" opacity={0.8}
               />
             )}
@@ -52,16 +52,16 @@ export function StatsChart({ days }: StatsChartProps) {
               <rect
                 x={x} y={chartHeight - barHeight}
                 width={barWidth} height={wrongHeight}
-                rx={barWidth / 2}
+                rx={2}
                 fill="#ef4444" opacity={0.7}
               />
             )}
             {/* Day label */}
             <text
-              x={x + barWidth / 2} y={chartHeight + 13}
+              x={x + barWidth / 2} y={chartHeight + 12}
               textAnchor="middle"
               fill={isToday ? '#3b82f6' : '#52525b'}
-              fontSize="7"
+              fontSize="8"
               fontWeight={isToday ? 'bold' : 'normal'}
             >
               {new Date(day.date + 'T12:00:00').getDate()}
