@@ -288,17 +288,25 @@ export function useDueCount(filterTags?: string[]) {
   const [reviewCount, setReviewCount] = useState(0)
   const [newCount, setNewCount] = useState(0)
 
-  useEffect(() => {
-    const load = async () => {
-      const { newCards, reviewCards } = await getDueCards(filterTags)
-      // If new cards exist, reviews are hidden (not shown until all new done)
-      setNewCount(newCards.length)
-      setReviewCount(newCards.length > 0 ? 0 : reviewCards.length)
-    }
-    load()
-    const interval = setInterval(load, 30000)
-    return () => clearInterval(interval)
+  const refresh = useCallback(async () => {
+    const { newCards, reviewCards } = await getDueCards(filterTags)
+    setNewCount(newCards.length)
+    setReviewCount(newCards.length > 0 ? 0 : reviewCards.length)
   }, [filterTags])
 
-  return { reviewCount, newCount, totalCount: reviewCount + newCount }
+  useEffect(() => {
+    refresh()
+    const interval = setInterval(refresh, 10000)
+    // Also refresh when tab becomes visible again
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [refresh])
+
+  return { reviewCount, newCount, totalCount: reviewCount + newCount, refresh }
 }

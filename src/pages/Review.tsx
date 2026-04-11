@@ -143,28 +143,13 @@ export function Review() {
           <p className="text-zinc-400 text-sm mb-1">Übung macht den Meister.</p>
         )}
 
-        {session.sessionsLeft > 0 && (
-          <p className="text-zinc-600 text-xs mb-6">
-            Noch {session.sessionsLeft} {session.sessionsLeft === 1 ? 'Session' : 'Sessions'} übrig
-          </p>
-        )}
-
-        <div className="flex gap-3 w-full max-w-xs">
-          {session.sessionsLeft > 0 ? (
-            <button
-              onClick={reload}
-              className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm active:bg-blue-500"
-            >
-              Nächste Session
-            </button>
-          ) : (
-            <button
-              onClick={reload}
-              className="flex-1 py-3 rounded-xl bg-zinc-800 text-white text-sm hover:bg-zinc-700"
-            >
-              Nochmal prüfen
-            </button>
-          )}
+        <div className="flex gap-3 w-full max-w-xs mt-4">
+          <button
+            onClick={reload}
+            className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm active:bg-blue-500"
+          >
+            Nächste Session
+          </button>
         </div>
       </div>
     )
