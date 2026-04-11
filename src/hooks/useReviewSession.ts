@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { db, type Card, getActivatedTopics, saveSessionSnapshot, getExamDates, getCardFach } from '@/lib/db'
 import { useSpacedRepetition } from './useSpacedRepetition'
-import { sortForSession, weightedShuffle } from '@/lib/leitner'
+import { weightedShuffle, shuffle } from '@/lib/leitner'
 import { calculateAllScores, getFach } from '@/lib/scoreCalculator'
 
 const SESSION_SIZE = 20
@@ -169,14 +169,14 @@ export function useReviewSession(filterTags?: string[]) {
     let sessionCards: Card[]
     let totalAvailable: number
     if (newCards.length > 0) {
-      // New cards weighted by past failures (cards you got wrong before come first)
-      const weighted = weightedShuffle(newCards, wrongCounts)
-      sessionCards = weighted.slice(0, SESSION_SIZE)
+      // Pick SESSION_SIZE cards weighted by failures, then shuffle for random order
+      const picked = weightedShuffle(newCards, wrongCounts).slice(0, SESSION_SIZE)
+      sessionCards = shuffle(picked)
       totalAvailable = newCards.length
     } else {
-      // Reviews: sort by level, within same level weight by failures
-      const sorted = sortForSession(reviewCards, wrongCounts)
-      sessionCards = sorted.slice(0, SESSION_SIZE)
+      // Pick SESSION_SIZE reviews weighted by failures, then shuffle
+      const picked = weightedShuffle(reviewCards, wrongCounts).slice(0, SESSION_SIZE)
+      sessionCards = shuffle(picked)
       totalAvailable = reviewCards.length
     }
     const remaining = totalAvailable - sessionCards.length
