@@ -149,7 +149,7 @@ export function useReviewSession(filterTags?: string[]) {
   const loadSession = useCallback(async () => {
     // Try to restore an active session
     const saved = loadSessionFromStorage()
-    if (saved && saved.currentCard && saved.reviewedCount > 0) {
+    if (saved && saved.currentCard) {
       setSession(saved)
       setLoading(false)
       return
@@ -182,7 +182,7 @@ export function useReviewSession(filterTags?: string[]) {
     const remaining = totalAvailable - sessionCards.length
     const sessionsLeft = Math.ceil(remaining / SESSION_SIZE)
 
-    setSession({
+    const newSession: ReviewSession = {
       queue: sessionCards.slice(1),
       currentCard: sessionCards[0] ?? null,
       isFlipped: false,
@@ -195,7 +195,9 @@ export function useReviewSession(filterTags?: string[]) {
       sessionsLeft,
       progressBefore,
       progressAfter: null,
-    })
+    }
+    setSession(newSession)
+    if (!newSession.isComplete) saveSessionToStorage(newSession)
     setLoading(false)
   }, [filterTags])
 
