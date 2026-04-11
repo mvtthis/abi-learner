@@ -162,24 +162,37 @@ export function ProgressGraph() {
           />
         )}
 
-        {/* X-axis labels (clickable) */}
+        {/* X-axis labels (clickable, not selectable) */}
         {snapshots.map((s, i) => {
           const x = paddingLeft + (maxSessions > 1 ? i * xStep : plotWidth / 2)
           const isSelected = selectedSession === s.sessionNumber
           return (
-            <g key={s.id} onClick={() => setSelectedSession(isSelected ? null : s.sessionNumber)} className="cursor-pointer">
-              {/* Larger invisible hit area */}
+            <g
+              key={s.id}
+              onClick={() => setSelectedSession(isSelected ? null : s.sessionNumber)}
+              style={{ cursor: 'pointer', userSelect: 'none', WebkitUserSelect: 'none' }}
+            >
+              {/* Larger invisible hit area for mobile */}
               <rect
-                x={x - 8} y={graphHeight - paddingBottom}
-                width={16} height={paddingBottom}
+                x={x - 10} y={graphHeight - paddingBottom - 2}
+                width={20} height={paddingBottom + 4}
                 fill="transparent"
               />
+              {/* Background pill for selected state */}
+              {isSelected && (
+                <rect
+                  x={x - 7} y={graphHeight - 15}
+                  width={14} height={12} rx={3}
+                  fill="#3b82f6" opacity={0.2}
+                />
+              )}
               <text
                 x={x} y={graphHeight - 6}
                 textAnchor="middle"
-                fill={isSelected ? '#3b82f6' : '#52525b'}
-                fontSize={isSelected ? '8' : '6'}
+                fill={isSelected ? '#3b82f6' : '#71717a'}
+                fontSize="7"
                 fontWeight={isSelected ? 'bold' : 'normal'}
+                style={{ pointerEvents: 'none' }}
               >
                 {s.sessionNumber}
               </text>
