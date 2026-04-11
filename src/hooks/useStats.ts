@@ -65,8 +65,7 @@ export function useStats() {
     const hasTodayReviews = reviewDays.has(todayKey)
     if (hasTodayReviews) streak = 1
 
-    const startOffset = hasTodayReviews ? 1 : 1
-    for (let i = startOffset; i <= 365; i++) {
+    for (let i = 1; i <= 365; i++) {
       const d = new Date(today)
       d.setDate(d.getDate() - i)
       const key = toLocalDateKey(d.getTime())

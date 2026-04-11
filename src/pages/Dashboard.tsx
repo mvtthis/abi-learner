@@ -10,6 +10,7 @@ import { TopicBreakdown } from '@/components/TopicBreakdown'
 import { TopicManager } from '@/components/TopicManager'
 import { getFachLabel } from '@/lib/scoreCalculator'
 import { getExamDates, type ExamDate } from '@/lib/db'
+import { useActivatedTopics } from '@/hooks/useActivatedTopics'
 import { ExamDateEditor } from '@/components/ExamDateEditor'
 
 function ExamCountdown({ examDates }: { examDates: Map<string, ExamDate> }) {
@@ -68,6 +69,7 @@ export function Dashboard() {
   const stats = useStats()
   const { overall, fachScores, topicScores } = useReadinessScore()
   const allCards = useAllCards()
+  const { activatedTopics } = useActivatedTopics()
   const [expandedFach, setExpandedFach] = useState<string | null>(null)
   const [examDates, setExamDates] = useState<Map<string, ExamDate>>(new Map())
 
@@ -106,15 +108,15 @@ export function Dashboard() {
               )}
             </p>
           </>
-        ) : totalCount === 0 && allCards.length > 0 ? (
-          <>
-            <p className="text-blue-100 text-sm">Alles erledigt</p>
-            <p className="text-xl font-bold text-white mt-1">Keine Karten fällig</p>
-          </>
-        ) : allCards.length > 0 ? (
+        ) : allCards.length > 0 && activatedTopics.size === 0 ? (
           <>
             <p className="text-blue-100 text-sm">Keine Themen aktiv</p>
             <p className="text-lg font-bold text-white mt-1">Wähle unten Themen aus um zu starten</p>
+          </>
+        ) : allCards.length > 0 ? (
+          <>
+            <p className="text-blue-100 text-sm">Alles erledigt</p>
+            <p className="text-xl font-bold text-white mt-1">Keine Karten fällig</p>
           </>
         ) : (
           <>

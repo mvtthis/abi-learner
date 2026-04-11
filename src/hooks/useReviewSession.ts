@@ -150,8 +150,8 @@ export function useReviewSession(filterTags?: string[]) {
 
     setLoading(true)
 
-    // Snapshot current progress before session
-    const allCards = await db.cards.filter((c) => !c.deleted).toArray()
+    // Snapshot current progress before session (only cards that have been reviewed)
+    const allCards = await db.cards.filter((c) => !c.deleted && c.repetitions > 0).toArray()
     const scores = calculateAllScores(allCards)
     const fachBefore = new Map(scores.fachScores.map((f) => [f.fach, f.score]))
     const progressBefore = { overall: scores.overall, fach: fachBefore }
@@ -206,12 +206,12 @@ export function useReviewSession(filterTags?: string[]) {
     await reviewCard(session.currentCard.id, correct)
 
     const reviewedCount = session.reviewedCount + 1
-    const isLastAnswer = reviewedCount >= session.totalCards
+    const isSessionEnding = session.queue.length === 0
 
     // Calculate progress after if session is ending
     let progressAfter: { overall: number; fach: Map<string, number> } | null = null
-    if (isLastAnswer || (session.queue.length === 0 && correct)) {
-      const freshCards = await db.cards.filter((c) => !c.deleted).toArray()
+    if (isSessionEnding) {
+      const freshCards = await db.cards.filter((c) => !c.deleted && c.repetitions > 0).toArray()
       const freshScores = calculateAllScores(freshCards)
       progressAfter = {
         overall: freshScores.overall,
@@ -242,17 +242,18 @@ export function useReviewSession(filterTags?: string[]) {
 
       // No reinsertion of wrong cards — they come back next session
       const nextCard = newQueue.shift() ?? null
+      const isComplete = nextCard === null
 
       const updated = {
         ...prev,
         queue: newQueue,
         currentCard: nextCard,
         isFlipped: false,
-        isComplete: nextCard === null,
+        isComplete,
         reviewedCount: counted,
         correctCount,
         seenIds: newSeenIds,
-        progressAfter: nextCard === null ? progressAfter : prev.progressAfter,
+        progressAfter: isComplete ? progressAfter : prev.progressAfter,
       }
 
       // Persist or clear session storage

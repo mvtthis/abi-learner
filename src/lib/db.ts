@@ -144,10 +144,10 @@ export async function getDaysUntilExam(fach: string): Promise<number | null> {
   const exam = await db.examDates.get(fach)
   if (!exam) return null
   const examDate = new Date(exam.date)
-  examDate.setHours(23, 59, 59, 999)
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-  return Math.ceil((examDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+  examDate.setHours(13, 0, 0, 0) // consistent with Dashboard + session filter
+  const diffMs = examDate.getTime() - Date.now()
+  if (diffMs <= 0) return 0
+  return Math.ceil(diffMs / (24 * 60 * 60 * 1000))
 }
 
 export async function getSettings(): Promise<AppSettings> {
