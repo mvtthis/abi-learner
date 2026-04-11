@@ -15,9 +15,9 @@ export function StatsChart({ days }: StatsChartProps) {
   return (
     <div className="flex items-end gap-1 h-32 w-full">
       {days.map((day) => {
-        const height = (day.total / maxTotal) * 100
+        const heightPct = (day.total / maxTotal) * 100
         const correctPct = day.total > 0 ? ((day.good + day.easy) / day.total) * 100 : 0
-        const wrongPct = day.total > 0 ? ((day.again + day.hard) / day.total) * 100 : 0
+        const wrongPct = day.total > 0 ? 100 - correctPct : 0
         const isToday = day.date === today
 
         return (
@@ -26,14 +26,14 @@ export function StatsChart({ days }: StatsChartProps) {
             className="flex-1 flex flex-col items-center gap-1"
           >
             <div
-              className="w-full rounded-t-sm overflow-hidden flex flex-col-reverse"
-              style={{ height: `${Math.max(height, day.total > 0 ? 8 : 2)}%` }}
+              className="w-full rounded-t-sm overflow-hidden"
+              style={{ height: `${Math.max(heightPct, day.total > 0 ? 10 : 2)}%` }}
             >
               {day.total > 0 ? (
-                <>
-                  <div className="bg-red-500" style={{ height: `${wrongPct}%` }} />
-                  <div className="bg-emerald-500" style={{ height: `${correctPct}%` }} />
-                </>
+                <div className="w-full h-full flex flex-col">
+                  <div className="w-full bg-emerald-500" style={{ height: `${correctPct}%` }} />
+                  <div className="w-full bg-red-500 flex-1" />
+                </div>
               ) : (
                 <div className="bg-zinc-800 w-full h-full" />
               )}
