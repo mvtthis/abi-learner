@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { getSettings, cleanupBadSnapshots } from '@/lib/db'
 import { Layout } from '@/components/Layout'
 import { Dashboard } from '@/pages/Dashboard'
@@ -65,6 +66,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppRouter />
+      <Analytics />
     </BrowserRouter>
   )
 }
