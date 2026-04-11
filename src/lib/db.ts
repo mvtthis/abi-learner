@@ -245,38 +245,44 @@ export async function getSessionSnapshots(): Promise<SessionSnapshot[]> {
 
 /** If snapshots are empty or missing topic-level data, reseed from current state */
 export async function seedInitialSnapshot(): Promise<void> {
-  const snapshots = await db.sessionSnapshots.toArray()
+  try {
+    const snapshots = await db.sessionSnapshots.toArray()
 
-  // Check if existing snapshots have topic-level keys (contain ::)
-  const hasTopicData = snapshots.some((s) =>
-    Object.keys(s.topicScores).some((k) => k.includes('::'))
-  )
+    const hasTopicData = snapshots.some((s) =>
+      Object.keys(s.topicScores).some((k) => k.includes('::'))
+    )
 
-  // If snapshots exist with topic data, nothing to do
-  if (snapshots.length > 0 && hasTopicData) return
+    if (snapshots.length > 0 && hasTopicData) return
 
-  // Clear old fach-only snapshots
-  if (snapshots.length > 0 && !hasTopicData) {
-    await db.sessionSnapshots.clear()
-  }
-
-  const reviewCount = await db.reviewLogs.count()
-  if (reviewCount === 0) return
-
-  // Import here to avoid circular dependency
-  const { calculateAllScores } = await import('./scoreCalculator')
-  const allCards = await db.cards.filter((c) => !c.deleted).toArray()
-  const scores = calculateAllScores(allCards)
-
-  const topicScores: Record<string, number> = {}
-  for (const fs of scores.fachScores) {
-    topicScores[fs.fach] = fs.score
-  }
-  for (const [fach, topics] of scores.topicScores) {
-    for (const t of topics) {
-      topicScores[`${fach}::${t.topic.toLowerCase()}`] = t.score
+    // Clear old fach-only snapshots
+    if (snapshots.length > 0) {
+      await db.sessionSnapshots.clear()
     }
-  }
 
-  await saveSessionSnapshot(topicScores)
+    const reviewCount = await db.reviewLogs.count()
+    if (reviewCount === 0) return
+
+    const { calculateAllScores } = await import('./scoreCalculator')
+    const allCards = await db.cards.filter((c) => !c.deleted).toArray()
+    if (allCards.length === 0) return
+
+    const scores = calculateAllScores(allCards)
+
+    const topicScores: Record<string, number> = {}
+    for (const fs of scores.fachScores) {
+      topicScores[fs.fach] = fs.score
+    }
+    for (const [fach, topics] of scores.topicScores) {
+      for (const t of topics) {
+        topicScores[`${fach}::${t.topic.toLowerCase()}`] = t.score
+      }
+    }
+
+    if (Object.keys(topicScores).length > 0) {
+      await saveSessionSnapshot(topicScores)
+      console.log('Seeded initial snapshot with', Object.keys(topicScores).length, 'scores')
+    }
+  } catch (err) {
+    console.error('Failed to seed initial snapshot:', err)
+  }
 }

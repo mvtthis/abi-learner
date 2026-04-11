@@ -17,8 +17,12 @@ function AppRouter() {
   )
 
   useEffect(() => {
-    getSettings().then((s) => setOnboardingComplete(s.onboarding_complete))
-    seedInitialSnapshot()
+    async function init() {
+      const s = await getSettings()
+      setOnboardingComplete(s.onboarding_complete)
+      await seedInitialSnapshot()
+    }
+    init()
   }, [])
 
   const completeOnboarding = () => setOnboardingComplete(true)
