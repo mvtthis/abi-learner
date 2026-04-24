@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { getSettings, cleanupBadSnapshots } from '@/lib/db'
 import { Analytics } from '@vercel/analytics/react'
 import { Layout } from '@/components/Layout'
